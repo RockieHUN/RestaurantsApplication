@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "898122797520",
+    "firebase_url": "https://luigi-8cee6.firebaseio.com",
+    "project_id": "luigi-8cee6",
+    "storage_bucket": "luigi-8cee6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898122797520:android:109d04e88cf6337b98a9d5",
+        "android_client_info": {
+          "package_name": "com.example.luigi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "898122797520-4u9ilusvmbg6b7j04pauv3jjmofnhri8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlq7vbxs5NhPB74MWm2467njX5gpr_NTY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "898122797520-4u9ilusvmbg6b7j04pauv3jjmofnhri8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
