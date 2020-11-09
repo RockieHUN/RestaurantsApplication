@@ -13,10 +13,34 @@
         <action
             android:id="@+id/action_splashScreenFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
+        <action
+            android:id="@+id/action_splashScreenFragment_to_register2"
+            app:destination="@id/register" />
     </fragment>
+
     <fragment
         android:id="@+id/mainMenuFragment"
         android:name="com.example.luigi.MainMenuFragment"
         android:label="fragment_main_menu"
         tools:layout="@layout/fragment_main_menu" />
+
+    <fragment
+        android:id="@+id/register"
+        android:name="com.example.luigi.Register"
+        android:label="Register" >
+        <action
+            android:id="@+id/action_register_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+        <action
+            android:id="@+id/action_register_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.luigi.LoginFragment"
+        android:label="LoginFragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_mainMenuFragment"
+            app:destination="@id/mainMenuFragment" />
+    </fragment>
 </navigation>
