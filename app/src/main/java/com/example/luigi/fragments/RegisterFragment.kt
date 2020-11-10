@@ -1,4 +1,4 @@
-package com.example.luigi
+package com.example.luigi.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,10 +10,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
+import com.example.luigi.R
 import com.example.luigi.databinding.FragmentRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 
-class Register : Fragment() {
+class RegisterFragment : Fragment() {
 
     private lateinit var binding : FragmentRegisterBinding
     private lateinit var sharedPref : SharedPreferences
@@ -27,7 +28,7 @@ class Register : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_register,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_register,container,false)
         return binding.root
     }
 

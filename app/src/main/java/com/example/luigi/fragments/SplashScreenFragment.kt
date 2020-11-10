@@ -1,4 +1,4 @@
-package com.example.luigi
+package com.example.luigi.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
+import com.example.luigi.R
 import com.example.luigi.databinding.FragmentSplashScreenBinding
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
@@ -24,7 +25,7 @@ class SplashScreenFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        binding= DataBindingUtil.inflate(inflater,R.layout.fragment_splash_screen,container,false)
+        binding= DataBindingUtil.inflate(inflater, R.layout.fragment_splash_screen,container,false)
         return binding.root
     }
 

@@ -1,4 +1,4 @@
-package com.example.luigi
+package com.example.luigi.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -7,11 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat
 import androidx.databinding.DataBindingUtil
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.example.luigi.R
 import com.example.luigi.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 
@@ -28,7 +26,7 @@ class LoginFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_login,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_login,container,false)
         return binding.root
     }
 

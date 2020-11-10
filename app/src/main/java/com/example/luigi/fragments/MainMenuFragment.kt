@@ -1,4 +1,4 @@
-package com.example.luigi
+package com.example.luigi.fragments
 
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.luigi.R
 import com.example.luigi.databinding.FragmentMainMenuBinding
 import com.example.luigi.repository.Repository
 import com.example.luigi.viewModels.ApiViewModel
@@ -29,7 +30,7 @@ class MainMenuFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DataBindingUtil.inflate(inflater,R.layout.fragment_main_menu,container,false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_main_menu,container,false)
         return binding.root
     }
 
