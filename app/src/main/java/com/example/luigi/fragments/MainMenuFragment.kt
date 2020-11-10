@@ -1,6 +1,5 @@
 package com.example.luigi.fragments
 
-import android.content.ClipData
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -11,12 +10,11 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.DataAdapter
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentMainMenuBinding
 import com.example.luigi.model.Restaurant
-import com.example.luigi.repository.Repository
+import com.example.luigi.repository.ApiRepository
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 
@@ -44,7 +42,7 @@ class MainMenuFragment : Fragment() {
 
 
         //API
-        val repository = Repository()
+        val repository = ApiRepository()
         val viewModelFactory = ApiViewModelFactory(repository)
         viewModel = ViewModelProvider(this,viewModelFactory).get(ApiViewModel::class.java)
 
