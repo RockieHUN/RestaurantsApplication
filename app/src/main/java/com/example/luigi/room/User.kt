@@ -9,6 +9,7 @@ import com.example.luigi.model.Restaurant
 data class User (
     @PrimaryKey(autoGenerate = true)
     val id : Int,
+    val passwordHash : String,
     val name : String,
     val address : String,
     val phone_number : String,

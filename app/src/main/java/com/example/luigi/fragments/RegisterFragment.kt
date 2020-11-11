@@ -8,11 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentTransaction
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentRegisterBinding
-import com.google.firebase.auth.FirebaseAuth
+import com.example.luigi.room.User
+import java.util.*
+import kotlin.concurrent.timerTask
+
 
 class RegisterFragment : Fragment() {
 
@@ -35,20 +40,80 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+        //init user
+        val user = User(0,"","","","","", listOf())
+
+
+        //load the first phase of the registration
+        var transaction = parentFragmentManager.beginTransaction()
+        var fragment = RegistrationPhaseOneFragment()
+        transaction.add(R.id.registration_container,fragment)
+        transaction.commit()
+
+
+
         // the user can navigate from register screen to login screen
         binding.IAlreadyHaveAnAccount.setOnClickListener {
             findNavController().navigate(R.id.action_register_to_loginFragment)
         }
 
-        //set onclick listener to registerButton
+
+        var currentFragment = 1       //counter what determinate which fragments should be loaded
+
         binding.registerButton.setOnClickListener {
+            when (currentFragment) {
+                1 -> {
+                    loadFragment(2)
+                    currentFragment ++
+                }
+                //TODO: Registration
+                2 ->{
+                    findNavController().navigate(R.id.action_register_to_mainMenuFragment)
+                }
+            }
+        }
 
-            //get values from text fields
-            val email = binding.editTextEmail.text.toString()
-            val password = binding.editTextTextPassword.text.toString()
-            val password_again = binding.editTextTextPassword2.text.toString()
+        var callbackCounter = 0
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
 
-            register(email, password, password_again )
+            if (currentFragment == 1){
+                if (callbackCounter == 0) {
+                    Toast.makeText(requireContext(), "Press again to exit", Toast.LENGTH_SHORT).show()
+                    Timer().schedule(timerTask {
+                        callbackCounter = 0
+                    }, 2000)
+
+                    callbackCounter++
+                }
+                else requireActivity().finish()
+            }
+            else{
+                loadFragment(1)
+                currentFragment = 1
+            }
+
+
+
+        }
+    }
+
+    private fun loadFragment(which : Int){
+        val transaction : FragmentTransaction
+
+        if (which == 2){
+            transaction = parentFragmentManager.beginTransaction()
+            var fragment = RegistrationPhaseTwoFragment()
+            transaction.add(R.id.registration_container,fragment)
+            transaction.commit()
+            binding.registerButton.text="Register"
+        }
+        else{
+            transaction = parentFragmentManager.beginTransaction()
+            var fragment = RegistrationPhaseOneFragment()
+            transaction.add(R.id.registration_container,fragment)
+            transaction.commit()
+            binding.registerButton.text="Next"
         }
     }
 
@@ -56,47 +121,13 @@ class RegisterFragment : Fragment() {
     private fun register(email: String, password: String, password_again: String){
         var appContext = requireContext()
 
-        //checking inputs
-        if (email.isNullOrEmpty() || password.isNullOrEmpty() || password_again.isNullOrEmpty()) {
-            Toast.makeText(appContext,"Please fill in every field!", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (password.length<6)
-        {
-            binding.editTextTextPassword.error = "Password is too short"
-            return
-        }
-
-        if (password != password_again) {
-            binding.editTextTextPassword2.error = "Passwords doesn't match!"
-            return
-        }
 
 
         sharedPref = context?.getSharedPreferences("credentials", Context.MODE_PRIVATE)!!
-        var auth = FirebaseAuth.getInstance()
 
-        // if the registration is successful save to sharedPef and navigate to the main screen
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
 
-                    //save to sharedPref
-                    var editor=sharedPref.edit()
-                    editor.clear()
-                    editor.putString("email",email)
-                    editor.putString("password",password)
-                    editor.apply()
-                    Toast.makeText(appContext, "Registration succesfull!", Toast.LENGTH_SHORT).show()
 
-                    //navigate to main screen
-                    findNavController().navigate(R.id.action_register_to_mainMenuFragment)
 
-                } else {
-                    Toast.makeText(appContext, "Bad credentials! Please try again!", Toast.LENGTH_SHORT).show()
-                }
-            }
 
     }
 }
