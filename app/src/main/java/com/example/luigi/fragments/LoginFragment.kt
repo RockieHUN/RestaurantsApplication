@@ -9,10 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentLoginBinding
 import com.example.luigi.viewModels.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -47,7 +52,10 @@ class LoginFragment : Fragment() {
         binding.loginButton.setOnClickListener{
             val email=binding.editTextEmail.text.toString()
             val password= binding.editTextPassword.text.toString()
-            login(email,password)
+            val scope = CoroutineScope(Dispatchers.IO)
+            scope.launch {
+                login(email,password)
+            }
         }
     }
 
@@ -55,7 +63,7 @@ class LoginFragment : Fragment() {
 
     private fun login(email : String,password : String){
 
-        var user = userViewModel.getUser(email,md5(password))
+        val user = userViewModel.getUser(email,md5(password))
 
         //check if the user is exists in database
         //if exists save to sharedPref and navigate to the main menu

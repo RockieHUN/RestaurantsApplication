@@ -22,7 +22,14 @@
         android:id="@+id/mainMenuFragment"
         android:name="com.example.luigi.fragments.MainMenuFragment"
         android:label="fragment_main_menu"
-        tools:layout="@layout/fragment_main_menu" />
+        tools:layout="@layout/fragment_main_menu" >
+        <action
+            android:id="@+id/action_mainMenuFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_mainMenuFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/register"
@@ -45,4 +52,9 @@
             android:id="@+id/action_loginFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
     </fragment>
+    <fragment
+        tools:layout="@layout/fragment_detail"
+        android:id="@+id/detailFragment"
+        android:name="com.example.luigi.fragments.DetailFragment"
+        android:label="DetailFragment" />
 </navigation>

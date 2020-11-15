@@ -13,7 +13,7 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 class UserViewModel (application: Application): AndroidViewModel (application){
-    val readAllData : LiveData<List<User>>
+    private val readAllData : LiveData<List<User>>
     private val repository : UserRepository
 
     init {
@@ -29,8 +29,7 @@ class UserViewModel (application: Application): AndroidViewModel (application){
     }
 
     fun getUser(email : String, passwordHash : String): User?{
-         return repository.getUser(email,passwordHash)
+        return repository.getUser(email,passwordHash)
+        }
+
     }
-
-
-}
