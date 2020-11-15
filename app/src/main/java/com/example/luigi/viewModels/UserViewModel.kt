@@ -9,9 +9,11 @@ import com.example.luigi.room.User
 import com.example.luigi.room.UserDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.math.BigInteger
+import java.security.MessageDigest
 
 class UserViewModel (application: Application): AndroidViewModel (application){
-    private val readAllData : LiveData<List<User>>
+    val readAllData : LiveData<List<User>>
     private val repository : UserRepository
 
     init {
@@ -25,4 +27,10 @@ class UserViewModel (application: Application): AndroidViewModel (application){
             repository.addUser(user)
         }
     }
+
+    fun getUser(email : String, passwordHash : String): User?{
+         return repository.getUser(email,passwordHash)
+    }
+
+
 }

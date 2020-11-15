@@ -57,7 +57,7 @@ class RegisterFragment : Fragment() {
         registrationViewModel.setUser(user)
 
         userViewModel = requireActivity().run{
-            ViewModelProvider(this).get(UserViewModel::class.java)
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
 
 

@@ -8,15 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentLoginBinding
+import com.example.luigi.viewModels.UserViewModel
+import java.math.BigInteger
+import java.security.MessageDigest
 
 
 class LoginFragment : Fragment() {
 
     private lateinit var binding :FragmentLoginBinding
     private lateinit var sharedPref : SharedPreferences
+    private lateinit var userViewModel : UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +38,12 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //TODO: hints!
+        //get userViewModel
+        userViewModel = requireActivity().run {
+            ViewModelProvider(this).get(UserViewModel::class.java)
+        }
+
+        //listener for login button
         binding.loginButton.setOnClickListener{
             val email=binding.editTextEmail.text.toString()
             val password= binding.editTextPassword.text.toString()
@@ -41,17 +51,33 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun login(email:String,password:String){
+    // ******************** PRIVATE FUNCTIONS **********************
 
+    private fun login(email : String,password : String){
 
-                sharedPref= requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
-                val edit= sharedPref.edit()
-                edit.clear()
-                edit.putString("email",email)
-                edit.putString("password",password)
-                edit.apply()
-                findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
+        var user = userViewModel.getUser(email,md5(password))
 
-                binding.editTextEmail.error="Invalid password or email!"
+        //check if the user is exists in database
+        //if exists save to sharedPref and navigate to the main menu
+        if (user != null )
+        {
+            sharedPref= requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
+            val edit= sharedPref.edit()
+            edit.clear()
+            edit.putString("email",email)
+            edit.putString("password",md5(password))
+            edit.apply()
+            findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
+        }
+        else{
+            binding.editTextEmail.error="Invalid password or email!"
         }
     }
+
+    private fun md5(input : String): String {
+
+        val md = MessageDigest.getInstance("MD5")
+        return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
+    }
+
+}
