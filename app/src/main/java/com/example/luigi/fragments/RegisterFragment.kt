@@ -8,18 +8,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentRegisterBinding
 import com.example.luigi.model.RegistrationUser
+import com.example.luigi.model.Restaurant
 import com.example.luigi.room.User
 import com.example.luigi.viewModels.RegistrationViewModel
+import com.example.luigi.viewModels.UserViewModel
+import java.math.BigInteger
+import java.security.MessageDigest
 import java.util.*
 import kotlin.concurrent.timerTask
 
@@ -28,7 +33,8 @@ class RegisterFragment : Fragment() {
 
     private lateinit var binding : FragmentRegisterBinding
     private lateinit var sharedPref : SharedPreferences
-    private val viewModel : RegistrationViewModel by activityViewModels()
+    private val registrationViewModel : RegistrationViewModel by activityViewModels()
+    private lateinit var userViewModel : UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +52,13 @@ class RegisterFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // init viewModel
+        // init viewModels
         val user = RegistrationUser("","","","","")
-        viewModel.setUser(user)
+        registrationViewModel.setUser(user)
 
+        userViewModel = requireActivity().run{
+            ViewModelProvider(this).get(UserViewModel::class.java)
+        }
 
 
         //load the first phase of the registration
@@ -78,10 +87,12 @@ class RegisterFragment : Fragment() {
                     }
 
                 }
-                //TODO: Registration
-                //on fragment 2 validate second phase inputs and save user to database and navigate to the main screen
+
+                //on fragment 2 validate second phase inputs and save user to database, then navigate to the main screen
                 2 ->{
                     if (secondPhaseIsValid()){
+                        saveSecondPhaseData()
+                        register()
                         findNavController().navigate(R.id.action_register_to_mainMenuFragment)
                     }
 
@@ -121,6 +132,8 @@ class RegisterFragment : Fragment() {
 
         }
     }
+
+    // ********************* PRIVATE FUNCTIONS *****************
 
     private fun loadFragment(which : Int){
         val transaction : FragmentTransaction
@@ -169,13 +182,11 @@ class RegisterFragment : Fragment() {
         }
 
         //set values for viewModel
-        var user = viewModel.getUser()
+        var user = registrationViewModel.getUser()
         user?.email=emailView.text.toString()
         user?.password=pw2View.text.toString()
 
-
         return true
-
     }
 
     private fun saveSecondPhaseData(){
@@ -183,7 +194,7 @@ class RegisterFragment : Fragment() {
         val phoneView = binding.registrationContainer.findViewById<EditText>(R.id.editText_Phone)
         val addressView = binding.registrationContainer.findViewById<EditText>(R.id.editText_Address)
 
-        var user = viewModel.getUser()
+        var user = registrationViewModel.getUser()
         user?.name = nameView.text.toString()
         user?.phone_number = phoneView.text.toString()
         user?.address = addressView.text.toString()
@@ -212,16 +223,42 @@ class RegisterFragment : Fragment() {
         }
 
         return true
-
     }
 
 
-    //TODO: Regex
-    private fun register(email: String, password: String, password_again: String){
-        var appContext = requireContext()
 
+    private fun register(){
+       var regUser = registrationViewModel.getUser()
 
+        //create user for database
+        val user = User(
+                0,
+                md5(regUser?.password!!),
+                regUser.name,
+                regUser.address,
+                regUser.phone_number,
+                regUser.email
 
+        )
+
+        //TODO: Check if user exists
+        //adding user to database
+        userViewModel.addUser(user)
+
+        //saving credentials to sharedPref
         sharedPref = context?.getSharedPreferences("credentials", Context.MODE_PRIVATE)!!
+        var editor=sharedPref.edit()
+        editor.clear()
+        editor.putString("email",regUser.email)
+        editor.putString("password",md5(regUser.password))
+        editor.apply()
+
+        Toast.makeText(context,"Registration succesfull!",Toast.LENGTH_SHORT).show()
+
+    }
+
+    private fun md5(input:String): String {
+        val md = MessageDigest.getInstance("MD5")
+        return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
     }
 }

@@ -27,7 +27,8 @@
     <fragment
         android:id="@+id/register"
         android:name="com.example.luigi.fragments.RegisterFragment"
-        android:label="Register" >
+        android:label="Register"
+        tools:layout="@layout/fragment_register">
         <action
             android:id="@+id/action_register_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
@@ -38,7 +39,8 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.luigi.fragments.LoginFragment"
-        android:label="LoginFragment" >
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />

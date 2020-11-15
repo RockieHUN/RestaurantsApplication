@@ -11,7 +11,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentSplashScreenBinding
-import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
 class SplashScreenFragment : Fragment() {
@@ -49,28 +48,22 @@ class SplashScreenFragment : Fragment() {
     private fun login(preferences:MutableMap<String,*>){
 
         //check if credentials already exists
-        if (preferences.containsKey("email") && preferences.containsKey("password")){
-
-            //get firebase instance
-            val auth = FirebaseAuth.getInstance()
+        if (preferences.containsKey("email") && preferences.containsKey("password")) {
+        }
 
             // try to sing in and if it is successfil navigate to the main screen
-            auth.signInWithEmailAndPassword(preferences["email"].toString(),preferences["password"].toString()).addOnCompleteListener{task->
-                if (task.isSuccessful){
-                    findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
-                }
+
+                   // findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
+                    findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
+
 
                 //if login is not successful navigate to register
-                else{
-                    sharedPref.edit().clear().apply()
-                    findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
-                }
-            }
+
+                    //sharedPref.edit().clear().apply()
+
+
+
         }
-        else{
-            //if credentials does not exists successful navigate to register
-            findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
-        }
+
     }
 
-}

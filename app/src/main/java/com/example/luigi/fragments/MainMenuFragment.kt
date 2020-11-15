@@ -48,8 +48,8 @@ class MainMenuFragment : Fragment() {
 
         viewModel.getRestaurant()
 
-        var rest : Restaurant = Restaurant(1,"1","1","1","1","1",1,"1",
-            "1",1.0,2.0,1.1,"1","1","1")
+        var rest : Restaurant = Restaurant(1,"A la Casa Restaurant","St Street","1","1","1",1,"1",
+            "1",1.0,2.0,5.1,"1","1","1")
 
         viewModel.response.observe(requireActivity(), Observer { restaurant ->
             rest = restaurant

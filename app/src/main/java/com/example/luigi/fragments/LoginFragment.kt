@@ -11,7 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentLoginBinding
-import com.google.firebase.auth.FirebaseAuth
+
 
 class LoginFragment : Fragment() {
 
@@ -42,10 +42,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun login(email:String,password:String){
-        val auth= FirebaseAuth.getInstance()
 
-        auth.signInWithEmailAndPassword(email,password).addOnCompleteListener{task->
-            if (task.isSuccessful) {
+
                 sharedPref= requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
                 val edit= sharedPref.edit()
                 edit.clear()
@@ -53,10 +51,7 @@ class LoginFragment : Fragment() {
                 edit.putString("password",password)
                 edit.apply()
                 findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
-            }
-            else{
+
                 binding.editTextEmail.error="Invalid password or email!"
-            }
         }
     }
-}

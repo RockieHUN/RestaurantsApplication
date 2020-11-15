@@ -8,11 +8,10 @@ import com.example.luigi.model.Restaurant
 @Entity(tableName = "user_table")
 data class User (
     @PrimaryKey(autoGenerate = true)
-    val id : Int,
-    val passwordHash : String,
-    val name : String,
-    val address : String,
-    val phone_number : String,
-    val email : String,
-    val favorites : List<Restaurant>
+    var id : Int,
+    var passwordHash : String,
+    var name : String,
+    var address : String,
+    var phone_number : String,
+    var email : String
 )
