@@ -52,6 +52,7 @@ class LoginFragment : Fragment() {
         binding.loginButton.setOnClickListener{
             val email=binding.editTextEmail.text.toString()
             val password= binding.editTextPassword.text.toString()
+
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
                 login(email,password)

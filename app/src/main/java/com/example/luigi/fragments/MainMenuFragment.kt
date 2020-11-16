@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,10 +23,11 @@ import com.example.luigi.model.Restaurant
 import com.example.luigi.repository.ApiRepository
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
+import com.example.luigi.viewModels.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainMenuFragment : Fragment() {
+class MainMenuFragment : Fragment(),  DataAdapter.OnItemClickListener {
 
     private lateinit var binding : FragmentMainMenuBinding
     private lateinit var viewModel : ApiViewModel
@@ -33,7 +35,6 @@ class MainMenuFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -61,19 +62,16 @@ class MainMenuFragment : Fragment() {
         //API
         val repository = ApiRepository()
         val viewModelFactory = ApiViewModelFactory(repository)
-        viewModel = ViewModelProvider(this,viewModelFactory).get(ApiViewModel::class.java)
-
-        viewModel.getRestaurant()
+        viewModel = ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
 
 
 
-        viewModel.response.observe(requireActivity(), Observer { restaurant ->
-            var rest = restaurant
-            Log.d("***",restaurant.toString())
 
-            //RECYCLE
-            var list = generateDummyList(30,rest)
-            binding.recycleView.adapter = DataAdapter(list,requireActivity())
+
+        viewModel.restaurants.observe(requireActivity(), Observer { restaurants ->
+
+            //RECYCLE VIEW
+            binding.recycleView.adapter = DataAdapter(restaurants.restaurants,this,viewModel.restaurants)
             binding.recycleView.layoutManager=LinearLayoutManager(context)
             binding.recycleView.setHasFixedSize(true)
         })
@@ -81,6 +79,13 @@ class MainMenuFragment : Fragment() {
 
 
     }
+
+    override fun onItemClick(position: Int) {
+        val bundle = bundleOf(Pair("position",position))
+        findNavController().navigate(R.id.action_mainMenuFragment_to_detailFragment,bundle)
+    }
+
+
 
     //TODO: DELETE THIS
     private fun generateDummyList(count: Int,item:Restaurant): List<Restaurant> {

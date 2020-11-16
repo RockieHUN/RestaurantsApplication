@@ -13,8 +13,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentSplashScreenBinding
+import com.example.luigi.repository.ApiRepository
 import com.example.luigi.room.UserDatabase
+import com.example.luigi.viewModels.ApiViewModel
+import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.UserViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.*
@@ -23,6 +29,7 @@ class SplashScreenFragment : Fragment() {
     private lateinit var binding : FragmentSplashScreenBinding
     private lateinit var sharedPref : SharedPreferences
     private lateinit var userViewModel : UserViewModel
+    private lateinit var restaurantsViewModel : ApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +49,9 @@ class SplashScreenFragment : Fragment() {
         userViewModel = requireActivity().run {
             ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
+
+        //preload data
+        preLoadData()
 
         //try to login after 2 seconds
         Timer().schedule(object : TimerTask() {
@@ -76,6 +86,15 @@ class SplashScreenFragment : Fragment() {
             findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
         }
     }
+
+    private fun preLoadData(){
+        val repository = ApiRepository()
+        val viewModelFactory = ApiViewModelFactory(repository)
+        restaurantsViewModel= ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
+
+        restaurantsViewModel.preLoadData()
+    }
+
 
 
 

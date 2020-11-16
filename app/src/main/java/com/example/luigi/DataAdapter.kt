@@ -7,27 +7,44 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
 
-class DataAdapter(private val items : List<Restaurant>,private val activity: Activity) : RecyclerView.Adapter<DataAdapter.DataViewHolder>(){
+class DataAdapter(
+        private val items : List<Restaurant>,
+        private  val listener : OnItemClickListener,
+        private var liveData : LiveData<CityRestaurants>
+) : RecyclerView.Adapter<DataAdapter.DataViewHolder>(){
 
-    class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{
+    inner class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{
         val restaurantImage = itemView.findViewById<ImageView>(R.id.restaurant_image)
         val restaurantName = itemView.findViewById<TextView>(R.id.restaurant_name)
         val restaurantAddress = itemView.findViewById<TextView>(R.id.restaurant_address)
         val restaurantPrice = itemView.findViewById<TextView>(R.id.restaurant_price)
 
 
+
+
+        init{
+            itemView.setOnClickListener(this)
+        }
+
         override fun onClick(v: View?) {
-            Log.d("**************","CLICKED")
-            v?.findNavController()?.navigate(R.id.action_mainMenuFragment_to_detailFragment)
+            var position = adapterPosition
+            if (position != RecyclerView.NO_POSITION){
+                listener.onItemClick(position)
+            }
         }
 
 
 
+    }
+    interface OnItemClickListener{
+        fun onItemClick(position: Int)
     }
 
 
@@ -44,7 +61,7 @@ class DataAdapter(private val items : List<Restaurant>,private val activity: Act
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
 
         //TODO can I do better?
-        Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
+        //Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
     }
 
     override fun getItemCount(): Int = items.size
