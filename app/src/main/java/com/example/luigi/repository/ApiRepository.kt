@@ -7,9 +7,7 @@ import com.example.luigi.model.Restaurant
 
 class ApiRepository {
 
-    suspend fun  getRestaurant() : Restaurant{
-        return RetrofitInstance.api.getRestaurant()
-    }
+
 
     suspend fun getCityRestaurants(city: String) : CityRestaurants{
         return RetrofitInstance.api.getCityRestaurants(city)

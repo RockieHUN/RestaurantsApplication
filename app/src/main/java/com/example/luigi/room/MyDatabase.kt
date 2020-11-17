@@ -8,7 +8,7 @@ import com.example.luigi.room.daos.MyDatabaseDao
 import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.room.entities.EntityUser
 
-@Database(entities = [EntityUser::class, EntityRestaurant::class], version = 2,exportSchema = false)
+@Database(entities = [EntityUser::class, EntityRestaurant::class], version = 4,exportSchema = false)
 abstract class MyDatabase : RoomDatabase(){
 
     abstract fun userDao() : MyDatabaseDao

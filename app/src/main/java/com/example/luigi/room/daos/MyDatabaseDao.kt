@@ -22,4 +22,12 @@ interface MyDatabaseDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun InsertRestaurant(entityRestaurant: EntityRestaurant)
+
+    @Query("Select * from restaurant_table where :city = city and :page = page")
+    suspend fun getRestaurants(city: String, page: Int) : List<EntityRestaurant>
+
+    @Query("Select COUNT(*) from restaurant_table where :city = city and :page = page")
+    suspend fun getCount(city : String, page: Int): Int
+
+
 }

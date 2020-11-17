@@ -9,11 +9,11 @@ import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
+import com.example.luigi.room.entities.EntityRestaurant
 
 class DataAdapter(
-        private val items : List<Restaurant>,
+        private val items : List<EntityRestaurant>,
         private  val listener : OnItemClickListener,
-        private var liveData : LiveData<CityRestaurants>
 ) : RecyclerView.Adapter<DataAdapter.DataViewHolder>(){
 
     inner class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{

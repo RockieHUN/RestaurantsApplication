@@ -3,6 +3,7 @@ package com.example.luigi.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,14 +21,16 @@ import com.example.luigi.databinding.FragmentMainMenuBinding
 import com.example.luigi.repository.ApiRepository
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
+import com.example.luigi.viewModels.MyDatabaseViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainMenuFragment : Fragment(),  DataAdapter.OnItemClickListener {
 
     private lateinit var binding : FragmentMainMenuBinding
-    private lateinit var viewModel : ApiViewModel
+    private lateinit var apiViewModel : ApiViewModel
     private lateinit var sharedPref : SharedPreferences
+    private lateinit var myDatabaseViewModel : MyDatabaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,13 +61,19 @@ class MainMenuFragment : Fragment(),  DataAdapter.OnItemClickListener {
         //API VIEWMODEL
         val repository = ApiRepository()
         val viewModelFactory = ApiViewModelFactory(repository)
-        viewModel = ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
+        apiViewModel = ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
 
+        //DATABASE VIEWMODEL
+        myDatabaseViewModel = requireActivity().run {
+            ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
+        }
+
+        Log.d("**********",myDatabaseViewModel.restaurants.value.toString())
         
-        viewModel.restaurants.observe(requireActivity(), Observer { restaurants ->
+        myDatabaseViewModel.restaurants.observe(requireActivity(), Observer { restaurants ->
 
             //RECYCLE VIEW
-            binding.recycleView.adapter = DataAdapter(restaurants.restaurants,this,viewModel.restaurants)
+            binding.recycleView.adapter = DataAdapter(restaurants,this)
             binding.recycleView.layoutManager=LinearLayoutManager(context)
             binding.recycleView.setHasFixedSize(true)
         })

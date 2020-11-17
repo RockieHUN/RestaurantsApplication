@@ -26,8 +26,8 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     Converting restaurants returned by api (CityRestaurants) to EntityRestaurant
     what will be added to the database with a TIMESTAMP using suspend function
      */
-    suspend fun addRestaurants(restaurants : CityRestaurants){
-        for (i in 0 until restaurants.restaurants.size){
+    suspend fun addRestaurants(restaurants : List<EntityRestaurant>){
+        for (i in 0 until restaurants.size){
 
             //get timestamp
             val timestamp =  DateTimeFormatter
@@ -35,29 +35,23 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
                     .withZone(ZoneOffset.UTC)
                     .format(Instant.now())
 
-            //convert restaurant
-            val restaurant = restaurants.restaurants[i]
-            val entityRestaurant = EntityRestaurant(
-                    0,
-                    restaurant.name,
-                    restaurant.address,
-                    restaurant.city,
-                    restaurant.state,
-                    restaurant.area,
-                    restaurant.postal_code,
-                    restaurant.country,
-                    restaurant.phone,
-                    restaurant.lat,
-                    restaurant.lng,
-                    restaurant.price,
-                    restaurant.reserve_url,
-                    restaurant.mobile_reserve_url,
-                    restaurant.image_url,
-                    timestamp
-            )
+            restaurants[i].timestamp = timestamp
 
-            myDatabaseDao.InsertRestaurant(entityRestaurant)
+            myDatabaseDao.InsertRestaurant(restaurants[i])
         }
+    }
+
+
+    /*
+    Get the count of restaurants of a given city and page,
+    available in the database
+     */
+    suspend fun getCount(city : String, page: Int) : Int{
+        return myDatabaseDao.getCount(city, page)
+    }
+
+    suspend fun getRestaurants(city : String, page: Int) : List<EntityRestaurant>{
+        return myDatabaseDao.getRestaurants(city, page)
     }
 
 }

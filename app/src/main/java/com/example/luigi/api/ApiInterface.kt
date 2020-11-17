@@ -8,9 +8,6 @@ import retrofit2.http.Query
 
 interface ApiInterface {
 
-    @GET("restaurants/107257")
-    suspend fun getRestaurant(): Restaurant
-
     @GET("restaurants")
     suspend fun getCityRestaurants(@Query("city") city: String) : CityRestaurants
 

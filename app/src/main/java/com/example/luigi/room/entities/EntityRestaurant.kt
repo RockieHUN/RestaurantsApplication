@@ -22,5 +22,6 @@ data class EntityRestaurant(
         val reserve_url : String,
         val mobile_reserve_url: String,
         val image_url: String,
-        val timestamp: String
+        var timestamp: String,
+        val page: Int
 )

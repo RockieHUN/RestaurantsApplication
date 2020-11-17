@@ -8,35 +8,31 @@ import com.example.luigi.model.CityNames
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
 import com.example.luigi.repository.ApiRepository
+import com.example.luigi.room.entities.EntityRestaurant
 import kotlinx.coroutines.launch
 
 class ApiViewModel(private val repository: ApiRepository): ViewModel() {
-
-    val response : MutableLiveData<Restaurant> = MutableLiveData()
-    val restaurants : MutableLiveData<CityRestaurants> = MutableLiveData()
+    val restaurants : MutableLiveData<List<EntityRestaurant>> = MutableLiveData()
     val cityNames : MutableLiveData<CityNames> = MutableLiveData()
 
-    //get a SINGLE restaurant
-    fun getRestaurant(){
-        viewModelScope.launch {
-            val restaurant = repository.getRestaurant()
-            response.value = restaurant
-        }
-    }
+
 
     //get the restaurants of a city
-    suspend fun getCityRestaurantsAsync(city: String){
+    suspend fun getCityRestaurants(city: String){
         viewModelScope.launch {
-            restaurants.value = repository.getCityRestaurants(city)
-            Log.d("*****Restaurants******",restaurants.value.toString())
+            val apiResult = repository.getCityRestaurants(city)
+            restaurants.value = CityRestaurantsToEntityRestaurants(apiResult)
         }
+
+
     }
 
     //Get city names and insert into the database
-    private suspend fun getCityNamesAsync() {
+     private suspend fun getCityNames() {
         viewModelScope.launch {
             cityNames.value = repository.getCityNames()
         }
+
     }
 
     /*
@@ -44,11 +40,41 @@ class ApiViewModel(private val repository: ApiRepository): ViewModel() {
     on the MainMenuFragment at startup
      */
     fun preLoadData(){
-        viewModelScope.launch {
-            getCityNamesAsync()
-            getCityRestaurantsAsync("New York")
+        viewModelScope.launch{
+            getCityNames()
+            getCityRestaurants("New York")
         }
+
+
     }
 
+    // ********** PRIVATE FUNCTIONS **********
+    fun CityRestaurantsToEntityRestaurants(apiResult: CityRestaurants) : List<EntityRestaurant>{
+        val list = mutableListOf<EntityRestaurant>()
 
+        for (i in 0 until apiResult.restaurants.size){
+            val restaurant = apiResult.restaurants[i]
+            val entityRestaurant = EntityRestaurant(
+                    0,
+                    restaurant.name,
+                    restaurant.address,
+                    restaurant.city,
+                    restaurant.state,
+                    restaurant.area,
+                    restaurant.postal_code,
+                    restaurant.country,
+                    restaurant.phone,
+                    restaurant.lat,
+                    restaurant.lng,
+                    restaurant.price,
+                    restaurant.reserve_url,
+                    restaurant.mobile_reserve_url,
+                    restaurant.mobile_reserve_url,
+                    "",
+                    apiResult.current_page
+            )
+            list.add(entityRestaurant)
+        }
+        return list
+    }
 }

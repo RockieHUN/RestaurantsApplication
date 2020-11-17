@@ -3,6 +3,7 @@ package com.example.luigi.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,9 @@ import com.example.luigi.repository.ApiRepository
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class SplashScreenFragment : Fragment() {
@@ -84,18 +88,41 @@ class SplashScreenFragment : Fragment() {
         val repository = ApiRepository()
         val viewModelFactory = ApiViewModelFactory(repository)
         restaurantsViewModel= ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
-        restaurantsViewModel.preLoadData()
-        saveDataToDatabase()
-    }
 
-    fun saveDataToDatabase(){
-        restaurantsViewModel.restaurants.observe(requireActivity(), androidx.lifecycle.Observer{ restaurants ->
-            myDatabaseViewModel.InsertRestaurants(restaurants)
+
+        /*
+        preload the data.
+        If the data is already in the database, load it
+        else make and api request and save it to the database
+         */
+
+        myDatabaseViewModel.useApi.observe(requireActivity(), androidx.lifecycle.Observer { value ->
+            if (value == true){
+                Log.d("*********","use API")
+                restaurantsViewModel.restaurants.observe(requireActivity(), androidx.lifecycle.Observer {restaurants ->
+                    myDatabaseViewModel.InsertRestaurants(restaurants)
+                    myDatabaseViewModel.restaurants.value=restaurants
+                })
+                restaurantsViewModel.preLoadData()
+            }
+            else{
+                // DO NOTHING
+            }
         })
+        myDatabaseViewModel.useDatabase.observe(requireActivity(), androidx.lifecycle.Observer { value->
+            if (value == true){
+                Log.d("*********","use DATABASE")
+                myDatabaseViewModel.getRestaurants("New York",1)
+            }
+            else
+            {
+                // DO NOTHING
+            }
+        })
+
+        myDatabaseViewModel.getCount("New York",1)
     }
 
 
-
-
-    }
+}
 
