@@ -14,15 +14,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentRegisterBinding
 import com.example.luigi.model.RegistrationUser
-import com.example.luigi.model.Restaurant
-import com.example.luigi.room.User
+import com.example.luigi.room.entities.EntityUser
 import com.example.luigi.viewModels.RegistrationViewModel
-import com.example.luigi.viewModels.UserViewModel
+import com.example.luigi.viewModels.MyDatabaseViewModel
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.util.*
@@ -34,7 +32,7 @@ class RegisterFragment : Fragment() {
     private lateinit var binding : FragmentRegisterBinding
     private lateinit var sharedPref : SharedPreferences
     private val registrationViewModel : RegistrationViewModel by activityViewModels()
-    private lateinit var userViewModel : UserViewModel
+    private lateinit var myDatabaseViewModel : MyDatabaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,8 +54,8 @@ class RegisterFragment : Fragment() {
         val user = RegistrationUser("","","","","")
         registrationViewModel.setUser(user)
 
-        userViewModel = requireActivity().run{
-            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        myDatabaseViewModel = requireActivity().run{
+            ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
 
 
@@ -231,7 +229,7 @@ class RegisterFragment : Fragment() {
        var regUser = registrationViewModel.getUser()
 
         //create user for database
-        val user = User(
+        val user = EntityUser(
                 0,
                 md5(regUser?.password!!),
                 regUser.name,
@@ -243,7 +241,7 @@ class RegisterFragment : Fragment() {
 
         //TODO: Check if user exists
         //adding user to database
-        userViewModel.addUser(user)
+        myDatabaseViewModel.addUser(user)
 
         //saving credentials to sharedPref
         sharedPref = context?.getSharedPreferences("credentials", Context.MODE_PRIVATE)!!

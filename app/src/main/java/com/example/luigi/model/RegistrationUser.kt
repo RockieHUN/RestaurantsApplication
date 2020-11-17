@@ -2,7 +2,7 @@ package com.example.luigi.model
 
 
 data class RegistrationUser (
-        var email : String,
+    var email : String,
     var password : String,
     var name : String,
     var address : String,

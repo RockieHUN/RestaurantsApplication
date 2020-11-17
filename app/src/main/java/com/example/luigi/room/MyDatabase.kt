@@ -4,20 +4,23 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.luigi.room.daos.MyDatabaseDao
+import com.example.luigi.room.entities.EntityRestaurant
+import com.example.luigi.room.entities.EntityUser
 
-@Database(entities = [User::class], version = 1,exportSchema = false)
-abstract class UserDatabase : RoomDatabase(){
+@Database(entities = [EntityUser::class, EntityRestaurant::class], version = 2,exportSchema = false)
+abstract class MyDatabase : RoomDatabase(){
 
-    abstract fun userDao() : UserDao
+    abstract fun userDao() : MyDatabaseDao
 
 
     companion object{
         //singleton, only one instance
         @Volatile
-        private var INSTANCE : UserDatabase? = null
+        private var INSTANCE : MyDatabase? = null
 
         //get database
-        fun getDatabase(context : Context): UserDatabase{
+        fun getDatabase(context : Context): MyDatabase{
             val tempInstance = INSTANCE
             if (tempInstance != null){
                 return tempInstance
@@ -27,9 +30,10 @@ abstract class UserDatabase : RoomDatabase(){
             synchronized(this){
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    UserDatabase::class.java,
+                    MyDatabase::class.java,
                     "user_database"
-                ).build()
+                ).fallbackToDestructiveMigration()
+                        .build()
                 INSTANCE = instance
                 return instance
             }

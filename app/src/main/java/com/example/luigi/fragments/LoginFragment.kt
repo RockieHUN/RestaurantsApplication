@@ -9,15 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentLoginBinding
-import com.example.luigi.viewModels.UserViewModel
+import com.example.luigi.viewModels.MyDatabaseViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Dispatcher
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -26,7 +24,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var binding :FragmentLoginBinding
     private lateinit var sharedPref : SharedPreferences
-    private lateinit var userViewModel : UserViewModel
+    private lateinit var myDatabaseViewModel : MyDatabaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,8 +42,8 @@ class LoginFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //get userViewModel
-        userViewModel = requireActivity().run {
-            ViewModelProvider(this).get(UserViewModel::class.java)
+        myDatabaseViewModel = requireActivity().run {
+            ViewModelProvider(this).get(MyDatabaseViewModel::class.java)
         }
 
         //listener for login button
@@ -64,7 +62,7 @@ class LoginFragment : Fragment() {
 
     private fun login(email : String,password : String){
 
-        val user = userViewModel.getUser(email,md5(password))
+        val user = myDatabaseViewModel.getUser(email,md5(password))
 
         //check if the user is exists in database
         //if exists save to sharedPref and navigate to the main menu

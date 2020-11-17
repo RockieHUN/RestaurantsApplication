@@ -3,7 +3,6 @@ package com.example.luigi.fragments
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -14,21 +13,15 @@ import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentSplashScreenBinding
 import com.example.luigi.repository.ApiRepository
-import com.example.luigi.room.UserDatabase
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
-import com.example.luigi.viewModels.UserViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.math.BigInteger
-import java.security.MessageDigest
+import com.example.luigi.viewModels.MyDatabaseViewModel
 import java.util.*
 
 class SplashScreenFragment : Fragment() {
     private lateinit var binding : FragmentSplashScreenBinding
     private lateinit var sharedPref : SharedPreferences
-    private lateinit var userViewModel : UserViewModel
+    private lateinit var myDatabaseViewModel : MyDatabaseViewModel
     private lateinit var restaurantsViewModel : ApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,8 +39,8 @@ class SplashScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //get userViewModel
-        userViewModel = requireActivity().run {
-            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        myDatabaseViewModel = requireActivity().run {
+            ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
 
         //preload data
@@ -72,7 +65,7 @@ class SplashScreenFragment : Fragment() {
 
         //check if credentials already exists
         if (preferences.containsKey("email") && preferences.containsKey("password")) {
-            var user = userViewModel.getUser(preferences["email"] as String , preferences["password"] as String)
+            var user = myDatabaseViewModel.getUser(preferences["email"] as String , preferences["password"] as String)
 
             //check if user exists in the database
             if (user != null) findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
@@ -91,8 +84,14 @@ class SplashScreenFragment : Fragment() {
         val repository = ApiRepository()
         val viewModelFactory = ApiViewModelFactory(repository)
         restaurantsViewModel= ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
-
         restaurantsViewModel.preLoadData()
+        saveDataToDatabase()
+    }
+
+    fun saveDataToDatabase(){
+        restaurantsViewModel.restaurants.observe(requireActivity(), androidx.lifecycle.Observer{ restaurants ->
+            myDatabaseViewModel.InsertRestaurants(restaurants)
+        })
     }
 
 
