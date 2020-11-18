@@ -1,18 +1,18 @@
 package com.example.luigi
 
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.luigi.databinding.ActivityMainBinding
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
-    private lateinit var viewModel : ApiViewModel
-
-
-    private lateinit var myDatabaseViewModel : MyDatabaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,9 +21,9 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.hide()
 
-        /*val repository = ApiRepository()
-        val viewModelFactory = ApiViewModelFactory(repository)
-        viewModel = ViewModelProvider(this,viewModelFactory).get(ApiViewModel::class.java)*/
-
+        //set up bottom navigation menu
+        val navController = findNavController(R.id.nav_host_fragment)
+        binding.bottomNavigaton.setupWithNavController(navController)
+        binding.bottomNavigaton.visibility = View.GONE
     }
 }

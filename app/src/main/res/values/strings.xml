@@ -12,6 +12,20 @@
     <string name="phone_hint">Phone number</string>
     <string name="IAlreadyHaveAnAccount">I already have an account</string>
 
+    <!-- Profile fragment -->
+    <string name="placeholder_name"> Your name </string>
+    <string name="placeholder_email"> youremail@youremail.com</string>
+    <string name="placeholder_address">Your Address</string>
+    <string name="placeholder_phone">0740234123</string>
+    <string name="logout_button">Logout</string>
+    <string name="content_description"> Profile picture </string>
+    <string name="icon_contentDescription">Icon</string>
+
+
+    <!--Bottom navigation -->
+    <string name="bottom_profile"> Profile </string>
+    <string name="bottom_settings"> Settings </string>
+    <string name="bottom_home"> Home </string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

@@ -26,9 +26,6 @@
         <action
             android:id="@+id/action_mainMenuFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
-        <action
-            android:id="@+id/action_mainMenuFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
     </fragment>
 
     <fragment
@@ -51,10 +48,27 @@
         <action
             android:id="@+id/action_loginFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_register"
+            app:destination="@id/register" />
     </fragment>
     <fragment
         tools:layout="@layout/fragment_detail"
         android:id="@+id/detailFragment"
         android:name="com.example.luigi.fragments.DetailFragment"
         android:label="DetailFragment" />
+    <fragment
+        tools:layout="@layout/fragment_profile"
+        android:id="@+id/profileFragment"
+        android:name="com.example.luigi.fragments.ProfileFragment"
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/fragment_settings"
+        android:id="@+id/settingsFragment"
+        android:name="com.example.luigi.fragments.SettingsFragment"
+        android:label="SettingsFragment" />
 </navigation>
