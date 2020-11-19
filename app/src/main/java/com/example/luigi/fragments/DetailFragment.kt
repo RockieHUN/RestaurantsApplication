@@ -7,30 +7,47 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentDetailBinding
+import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class DetailFragment : Fragment() {
     private lateinit var binding : FragmentDetailBinding
+    private lateinit var myDatabaseViewModel: MyDatabaseViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        var detail = savedInstanceState?.getBundle("position")
-        Log.d("**********",detail.toString())
-
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
-
         binding = DataBindingUtil.inflate(inflater,R.layout.fragment_detail,container,false)
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        myDatabaseViewModel = requireActivity().run{
+            ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
+        }
+
+        myDatabaseViewModel.restaurants.observe(requireActivity(), Observer {list ->
+            val restaurant = list[myDatabaseViewModel.position]
+
+            val city = "${restaurant.country}, ${restaurant.city}"
+            val price = "Price: $" + restaurant.price.toString()
+
+            binding.restaurantName.text = restaurant.name
+            binding.restaurantCity.text = city
+            binding.restaurantAddress.text = restaurant.address
+            binding.restaurantTelephone.text = restaurant.phone
+            binding.restaurantPrice.text = price
+        })
+    }
 
 }

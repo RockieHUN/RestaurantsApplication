@@ -7,14 +7,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentProfileBinding
+import java.util.*
+import kotlin.concurrent.timerTask
 
 
 class ProfileFragment : Fragment() {
-    //TODO onBackPressed
 
     private lateinit var binding : FragmentProfileBinding
     private lateinit var sharedPref : SharedPreferences
@@ -40,6 +43,10 @@ class ProfileFragment : Fragment() {
         binding.logoutButton.setOnClickListener{
             sharedPref.edit().clear().apply()
             findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            findNavController().navigate(R.id.action_profileFragment_to_mainMenuFragment)
         }
     }
 

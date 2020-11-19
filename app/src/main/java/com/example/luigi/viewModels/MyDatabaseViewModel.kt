@@ -20,6 +20,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     var useDatabase : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var useApi : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var restaurants : MutableLiveData<List<EntityRestaurant>> = MutableLiveData<List<EntityRestaurant>>()
+    var position : Int = 0
 
     init {
         val userDao = MyDatabase.getDatabase(application).userDao()

@@ -95,8 +95,8 @@ class MainMenuFragment : Fragment(), DataAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        val bundle = bundleOf(Pair("position", position))
-        findNavController().navigate(R.id.action_mainMenuFragment_to_detailFragment, bundle)
+       myDatabaseViewModel.position = position
+        findNavController().navigate(R.id.action_mainMenuFragment_to_detailFragment)
     }
 
 
