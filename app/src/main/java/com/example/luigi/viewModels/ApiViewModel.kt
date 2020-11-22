@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class ApiViewModel(private val repository: ApiRepository): ViewModel() {
     val restaurants : MutableLiveData<List<EntityRestaurant>> = MutableLiveData()
-    val cityNames : MutableLiveData<CityNames> = MutableLiveData()
+    val cityNames : MutableLiveData<List<String>> = MutableLiveData()
 
 
 
@@ -39,7 +39,7 @@ class ApiViewModel(private val repository: ApiRepository): ViewModel() {
     Preload data what will be displayed
     on the MainMenuFragment at startup
      */
-    fun preLoadData(){
+    fun LoadDataWithAPI(){
         viewModelScope.launch{
             getCityNames()
             getCityRestaurants("New York")

@@ -4,6 +4,7 @@ import com.example.luigi.api.RetrofitInstance
 import com.example.luigi.model.CityNames
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
+import com.example.luigi.room.entities.EntityCity
 
 class ApiRepository {
 
@@ -13,7 +14,9 @@ class ApiRepository {
         return RetrofitInstance.api.getCityRestaurants(city)
     }
 
-    suspend fun getCityNames() : CityNames{
-        return RetrofitInstance.api.getCityNames()
+    suspend fun getCityNames() : List<String>{
+        val result = RetrofitInstance.api.getCityNames()
+
+        return result.cities
     }
 }

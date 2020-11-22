@@ -77,5 +77,8 @@
         <action
             android:id="@+id/action_settingsFragment_to_mainMenuFragment"
             app:destination="@id/mainMenuFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_splashScreenFragment"
+            app:destination="@id/splashScreenFragment" />
     </fragment>
 </navigation>

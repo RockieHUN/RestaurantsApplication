@@ -1,20 +1,18 @@
-package com.example.luigi
+package com.example.luigi.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
-import com.example.luigi.model.CityRestaurants
-import com.example.luigi.model.Restaurant
+import com.example.luigi.R
 import com.example.luigi.room.entities.EntityRestaurant
 
-class DataAdapter(
-        private val items : List<EntityRestaurant>,
-        private  val listener : OnItemClickListener,
-) : RecyclerView.Adapter<DataAdapter.DataViewHolder>(){
+class MainDataAdapter(
+    private val items : List<EntityRestaurant>,
+    private  val listener : OnItemClickListener,
+) : RecyclerView.Adapter<MainDataAdapter.DataViewHolder>(){
 
     inner class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{
         val restaurantImage = itemView.findViewById<ImageView>(R.id.restaurant_image)
@@ -30,7 +28,7 @@ class DataAdapter(
         }
 
         override fun onClick(v: View?) {
-            var position = adapterPosition
+            val position = adapterPosition
             if (position != RecyclerView.NO_POSITION){
                 listener.onItemClick(position)
             }
@@ -46,7 +44,7 @@ class DataAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
 
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_layout,parent,false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.main_recycle_item_layout,parent,false)
         return DataViewHolder(itemView)
     }
 

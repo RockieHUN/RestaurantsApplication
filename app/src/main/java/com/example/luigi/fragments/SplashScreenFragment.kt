@@ -17,32 +17,32 @@ import com.example.luigi.repository.ApiRepository
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 
 class SplashScreenFragment : Fragment() {
-    private lateinit var binding : FragmentSplashScreenBinding
-    private lateinit var sharedPref : SharedPreferences
-    private lateinit var myDatabaseViewModel : MyDatabaseViewModel
-    private lateinit var restaurantsViewModel : ApiViewModel
+    private lateinit var binding: FragmentSplashScreenBinding
+    private lateinit var sharedPref: SharedPreferences
+    private lateinit var myDatabaseViewModel: MyDatabaseViewModel
+    private lateinit var apiViewModel: ApiViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
-        binding= DataBindingUtil.inflate(inflater, R.layout.fragment_splash_screen,container,false)
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_splash_screen, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //get userViewModel
+        //get databaseViewModel
         myDatabaseViewModel = requireActivity().run {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
@@ -54,7 +54,8 @@ class SplashScreenFragment : Fragment() {
         Timer().schedule(object : TimerTask() {
             override fun run() {
 
-                sharedPref = requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
+                sharedPref =
+                    requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
                 val credentials = sharedPref.all
                 login(credentials)
 
@@ -65,29 +66,32 @@ class SplashScreenFragment : Fragment() {
     // ***************************** PRIVATE FUNCTIONS ***********************
 
     //attempting to login. if it fails then navigate to register
-    private fun login(preferences:MutableMap<String,*>){
+    private fun login(preferences: MutableMap<String, *>) {
 
         //check if credentials already exists
         if (preferences.containsKey("email") && preferences.containsKey("password")) {
-            var user = myDatabaseViewModel.getUser(preferences["email"] as String , preferences["password"] as String)
+            val user = myDatabaseViewModel.getUser(
+                preferences["email"] as String,
+                preferences["password"] as String
+            )
 
             //check if user exists in the database
             if (user != null) findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
-            else{
+            else {
                 sharedPref.edit().clear().apply()
                 findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
             }
-        }
-        else{
+        } else {
             sharedPref.edit().clear().apply()
             findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
         }
     }
 
-    private fun preLoadData(){
+    private fun preLoadData() {
         val repository = ApiRepository()
         val viewModelFactory = ApiViewModelFactory(repository)
-        restaurantsViewModel= ViewModelProvider(requireActivity(),viewModelFactory).get(ApiViewModel::class.java)
+        apiViewModel =
+            ViewModelProvider(requireActivity(), viewModelFactory).get(ApiViewModel::class.java)
 
 
         /*
@@ -96,31 +100,53 @@ class SplashScreenFragment : Fragment() {
         else make and api request and save it to the database
          */
 
-        myDatabaseViewModel.useApi.observe(requireActivity(), androidx.lifecycle.Observer { value ->
-            if (value == true){
-                Log.d("*********","use API")
-                restaurantsViewModel.restaurants.observe(requireActivity(), androidx.lifecycle.Observer {restaurants ->
-                    myDatabaseViewModel.InsertRestaurants(restaurants)
-                    myDatabaseViewModel.restaurants.value=restaurants
-                })
-                restaurantsViewModel.preLoadData()
-            }
-            else{
-                // DO NOTHING
-            }
-        })
-        myDatabaseViewModel.useDatabase.observe(requireActivity(), androidx.lifecycle.Observer { value->
-            if (value == true){
-                Log.d("*********","use DATABASE")
-                myDatabaseViewModel.getRestaurants("New York",1)
-            }
-            else
-            {
-                // DO NOTHING
-            }
-        })
+        myDatabaseViewModel.useApi.observe(
+            requireActivity(),
+            androidx.lifecycle.Observer { useApi ->
+                if (useApi == true) {
+                    Log.d("*********", "use API")
 
-        myDatabaseViewModel.getCount("New York",1)
+                    //Observer for restaurants
+                    apiViewModel.restaurants.observe(
+                        requireActivity(),
+                        androidx.lifecycle.Observer { restaurants ->
+                            //save the restaurants to the database
+                            myDatabaseViewModel.InsertRestaurants(restaurants)
+                            myDatabaseViewModel.restaurants.value = restaurants
+                        })
+
+                    //Observer for city names
+                    apiViewModel.cityNames.observe(
+                        requireActivity(),
+                        androidx.lifecycle.Observer { cities ->
+                            myDatabaseViewModel.insertCities(cities)
+                            myDatabaseViewModel.cityNames = cities
+                        })
+
+                    //get restaurants and city names with API
+                    apiViewModel.LoadDataWithAPI()
+
+                } else {
+                    // DO NOTHING
+                }
+            })
+
+        myDatabaseViewModel.useDatabase.observe(
+            requireActivity(),
+            androidx.lifecycle.Observer { useDatabase ->
+                if (useDatabase == true) {
+                    Log.d("*********", "use DATABASE")
+
+                    //load restaurants from the database
+                    myDatabaseViewModel.loadRestaurantsFromDatabase("New York", 1)
+                    myDatabaseViewModel.loadCityNamesFromDatabase()
+
+                } else {
+                    // DO NOTHING
+                }
+            })
+
+        myDatabaseViewModel.getCount("New York", 1)
     }
 
 

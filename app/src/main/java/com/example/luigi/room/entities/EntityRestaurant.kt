@@ -2,7 +2,6 @@ package com.example.luigi.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import java.sql.Timestamp
 
 @Entity(tableName = "restaurant_table")
 data class EntityRestaurant(

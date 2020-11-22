@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.room.entities.EntityUser
 import com.example.luigi.room.daos.MyDatabaseDao
+import com.example.luigi.room.entities.EntityCity
 import com.example.luigi.room.entities.EntityRestaurant
 import java.sql.Timestamp
 import java.time.Instant
@@ -41,6 +42,14 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
         }
     }
 
+    // Insert a list of cities to the database
+    suspend fun addCities(cities : List<String>){
+        for (i in 0 until cities.size){
+            val city = EntityCity(0,cities[i])
+            myDatabaseDao.InsertCity(city)
+        }
+    }
+
 
     /*
     Get the count of restaurants of a given city and page,
@@ -50,8 +59,21 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
         return myDatabaseDao.getCount(city, page)
     }
 
+    /*
+    Query the restaurants with the
+    given city name and page
+     */
     suspend fun getRestaurants(city : String, page: Int) : List<EntityRestaurant>{
         return myDatabaseDao.getRestaurants(city, page)
     }
 
+    suspend fun deleteCache(){
+        myDatabaseDao.deleteRestaurants()
+        myDatabaseDao.deleteUsers()
+    }
+
+    //get the list of city names
+    suspend fun getCityNames() : List<String>{
+        return myDatabaseDao.getCityNames()
+    }
 }

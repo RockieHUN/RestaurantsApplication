@@ -87,6 +87,7 @@ class LoginFragment : Fragment() {
             edit.apply()
             findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
         } else {
+            //TODO: THIS CANT BE ON BACKGROUND THREAD
             binding.editTextEmail.error = "Invalid password or email!"
         }
     }

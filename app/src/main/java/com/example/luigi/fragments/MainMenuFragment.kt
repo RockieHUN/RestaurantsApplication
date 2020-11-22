@@ -1,35 +1,29 @@
 package com.example.luigi.fragments
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.core.os.bundleOf
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.luigi.DataAdapter
+import com.example.luigi.adapters.MainDataAdapter
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentMainMenuBinding
 import com.example.luigi.repository.ApiRepository
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_main_menu.view.*
 import java.util.*
 import kotlin.concurrent.timerTask
 
 
-class MainMenuFragment : Fragment(), DataAdapter.OnItemClickListener {
+class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentMainMenuBinding
     private lateinit var apiViewModel: ApiViewModel
@@ -51,6 +45,12 @@ class MainMenuFragment : Fragment(), DataAdapter.OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Add listener to the city selection button
+        binding.appBarLayout.constraint_toolbarHolder.select_button.setOnClickListener{
+            val dialog = MyDialogFragment()
+            dialog.show(requireActivity().supportFragmentManager,"costumDialog")
+        }
 
         //show bottom navigation menu
         requireActivity().findViewById<View>(R.id.bottom_navigaton).visibility = View.VISIBLE
@@ -88,7 +88,7 @@ class MainMenuFragment : Fragment(), DataAdapter.OnItemClickListener {
 
         //OBSERVING THE DATA AND PASSING TO THE RECYCLE VIEW
         myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
-            binding.recycleView.adapter = DataAdapter(restaurants, this)
+            binding.recycleView.adapter = MainDataAdapter(restaurants, this)
             binding.recycleView.layoutManager = LinearLayoutManager(context)
             binding.recycleView.setHasFixedSize(true)
         })

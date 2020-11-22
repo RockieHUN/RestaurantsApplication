@@ -1,10 +1,8 @@
 package com.example.luigi.room.daos
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
+import com.example.luigi.room.entities.EntityCity
 import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.room.entities.EntityUser
 
@@ -28,6 +26,20 @@ interface MyDatabaseDao {
 
     @Query("Select COUNT(*) from restaurant_table where :city = city and :page = page")
     suspend fun getCount(city : String, page: Int): Int
+
+    @Query("Delete from restaurant_table")
+    suspend fun deleteRestaurants()
+
+    @Query("Delete from user_table")
+    suspend fun deleteUsers()
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun InsertCity(entityCity: EntityCity)
+
+    @Query("Select name from city_table")
+    suspend fun getCityNames() : List<String>
+
+
 
 
 }

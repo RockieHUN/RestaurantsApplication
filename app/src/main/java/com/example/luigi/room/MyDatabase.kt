@@ -5,19 +5,19 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.luigi.room.daos.MyDatabaseDao
+import com.example.luigi.room.entities.EntityCity
 import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.room.entities.EntityUser
 
-@Database(entities = [EntityUser::class, EntityRestaurant::class], version = 4,exportSchema = false)
+@Database(entities = [EntityUser::class, EntityRestaurant::class, EntityCity::class], version = 5,exportSchema = false)
 abstract class MyDatabase : RoomDatabase(){
 
     abstract fun userDao() : MyDatabaseDao
 
 
     companion object{
-        //singleton, only one instance
         @Volatile
-        private var INSTANCE : MyDatabase? = null
+        private var INSTANCE : MyDatabase? = null    //singleton, only one instance
 
         //get database
         fun getDatabase(context : Context): MyDatabase{

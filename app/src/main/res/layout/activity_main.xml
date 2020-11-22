@@ -9,7 +9,9 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <fragment
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
