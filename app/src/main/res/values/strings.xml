@@ -21,6 +21,7 @@
     <string name="logout_button">Logout</string>
     <string name="content_description"> Profile picture </string>
     <string name="icon_contentDescription">Icon</string>
+    <string name="open_map"> Show on map </string>
 
 
     <!--Bottom navigation -->

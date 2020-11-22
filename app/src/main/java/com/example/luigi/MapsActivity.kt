@@ -7,6 +7,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
@@ -35,9 +36,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        //get intent variables (restaurant coordinates and name)
+        val lat = intent.getDoubleExtra("lat",-34.0)
+        val long = intent.getDoubleExtra("long",151.0)
+        val name = intent.getStringExtra("name")
+
+        val zoomLevel = 15f
+
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val coordinates = LatLng(lat, long)
+        mMap.addMarker(MarkerOptions().position(coordinates).title(name))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(coordinates))
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(zoomLevel))
+
+
+
     }
 }
