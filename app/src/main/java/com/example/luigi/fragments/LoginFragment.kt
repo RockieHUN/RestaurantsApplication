@@ -64,9 +64,9 @@ class LoginFragment : Fragment() {
             val password = binding.editTextPassword.text.toString()
 
             val scope = CoroutineScope(Dispatchers.IO)
-            scope.launch {
-                login(email, password)
-            }
+
+            login(email, password)
+
         }
     }
 
@@ -74,22 +74,25 @@ class LoginFragment : Fragment() {
 
     private fun login(email: String, password: String) {
 
-        val user = myDatabaseViewModel.getUser(email, md5(password))
-
         //check if the user is exists in database
         //if exists save to sharedPref and navigate to the main menu
-        if (user != null) {
-            sharedPref = requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
-            val edit = sharedPref.edit()
-            edit.clear()
-            edit.putString("email", email)
-            edit.putString("password", md5(password))
-            edit.apply()
-            findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
-        } else {
-            //TODO: THIS CANT BE ON BACKGROUND THREAD
-            binding.editTextEmail.error = "Invalid password or email!"
-        }
+        myDatabaseViewModel.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer { user ->
+
+            if (user != null) {
+                sharedPref = requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
+                val edit = sharedPref.edit()
+                edit.clear()
+                edit.putString("email", email)
+                edit.putString("password", md5(password))
+                edit.apply()
+                findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
+            } else {
+                //TODO: THIS CANT BE ON BACKGROUND THREAD
+                binding.editTextEmail.error = "Invalid password or email!"
+            }
+        })
+
+       myDatabaseViewModel.getUser(email, md5(password))
     }
 
     private fun md5(input: String): String {

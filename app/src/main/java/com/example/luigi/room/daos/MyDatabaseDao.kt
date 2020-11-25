@@ -16,7 +16,7 @@ interface MyDatabaseDao {
     fun readAllData(): LiveData<List<EntityUser>>
 
     @Query("Select * from user_table where :email = email and :passwordHash = passwordHash Limit 1")
-    fun getUser(email : String, passwordHash : String) : EntityUser?
+    suspend fun getUser(email : String, passwordHash : String) : EntityUser?
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun InsertRestaurant(entityRestaurant: EntityRestaurant)

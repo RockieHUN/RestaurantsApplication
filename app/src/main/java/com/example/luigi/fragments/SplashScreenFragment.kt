@@ -47,20 +47,17 @@ class SplashScreenFragment : Fragment() {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
 
-        //preload data
         preLoadData()
 
-        //try to login after 2 seconds
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
 
-                sharedPref =
-                    requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
-                val credentials = sharedPref.all
-                login(credentials)
+        /*
+        get credentials from database and try to log in
+        if login is successful, load the data
+         */
+        sharedPref = requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
+        val credentials = sharedPref.all
+        login(credentials)
 
-            }
-        }, 2000)
     }
 
     // ***************************** PRIVATE FUNCTIONS ***********************
@@ -68,20 +65,38 @@ class SplashScreenFragment : Fragment() {
     //attempting to login. if it fails then navigate to register
     private fun login(preferences: MutableMap<String, *>) {
 
+
         //check if credentials already exists
         if (preferences.containsKey("email") && preferences.containsKey("password")) {
-            val user = myDatabaseViewModel.getUser(
+            myDatabaseViewModel.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {user ->
+
+                //check if user exists in the database
+                if (user != null)
+                {
+                    //Log.d("**********************","observer SET")
+
+                    //Navigate to the main menu fragment ONLY when the data is loaded
+                    myDatabaseViewModel.loadedComponents.observe(viewLifecycleOwner, androidx.lifecycle.Observer { loadedComponents ->
+                        if (loadedComponents >= 2){
+                            findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
+                        }
+                   })
+                }
+                else
+                {
+                    sharedPref.edit().clear().apply()
+                    findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
+                }
+            })
+
+            myDatabaseViewModel.getUser(
                 preferences["email"] as String,
                 preferences["password"] as String
             )
 
-            //check if user exists in the database
-            if (user != null) findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
-            else {
-                sharedPref.edit().clear().apply()
-                findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
-            }
-        } else {
+
+        }
+        else {
             sharedPref.edit().clear().apply()
             findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
         }
@@ -106,6 +121,7 @@ class SplashScreenFragment : Fragment() {
                 if (useApi == true) {
                     Log.d("*********", "use API")
 
+
                     //Observer for restaurants
                     apiViewModel.restaurants.observe(
                         requireActivity(),
@@ -113,6 +129,7 @@ class SplashScreenFragment : Fragment() {
                             //save the restaurants to the database
                             myDatabaseViewModel.InsertRestaurants(restaurants)
                             myDatabaseViewModel.restaurants.value = restaurants
+                            myDatabaseViewModel.componentLoaded()
                         })
 
                     //Observer for city names
@@ -121,6 +138,7 @@ class SplashScreenFragment : Fragment() {
                         androidx.lifecycle.Observer { cities ->
                             myDatabaseViewModel.insertCities(cities)
                             myDatabaseViewModel.cityNames = cities
+                            myDatabaseViewModel.componentLoaded()
                         })
 
                     //get restaurants and city names with API
@@ -140,6 +158,7 @@ class SplashScreenFragment : Fragment() {
                     //load restaurants from the database
                     myDatabaseViewModel.loadRestaurantsFromDatabase("New York", 1)
                     myDatabaseViewModel.loadCityNamesFromDatabase()
+
 
                 } else {
                     // DO NOTHING

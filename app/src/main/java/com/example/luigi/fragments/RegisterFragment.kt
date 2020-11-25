@@ -252,6 +252,8 @@ class RegisterFragment : Fragment() {
         //TODO: Check if user exists
         //adding user to database
         myDatabaseViewModel.addUser(user)
+        myDatabaseViewModel.user.value = user
+
 
         //saving credentials to sharedPref
         sharedPref = context?.getSharedPreferences("credentials", Context.MODE_PRIVATE)!!

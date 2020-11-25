@@ -46,6 +46,7 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         //Add listener to the city selection button
         binding.appBarLayout.constraint_toolbarHolder.select_button.setOnClickListener{
             val dialog = MyDialogFragment()
@@ -65,6 +66,8 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
         myDatabaseViewModel = requireActivity().run {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
+        //remove observers set on previous fragments
+        myDatabaseViewModel.removeObservers(requireActivity())
 
 
         /*

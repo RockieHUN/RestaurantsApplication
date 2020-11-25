@@ -19,7 +19,7 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
         myDatabaseDao.addUser(entityUser)
     }
 
-    fun getUser(email : String, passwordHash: String) : EntityUser?{
+    suspend fun getUser(email : String, passwordHash: String) : EntityUser?{
         return myDatabaseDao.getUser(email,passwordHash)
     }
 
