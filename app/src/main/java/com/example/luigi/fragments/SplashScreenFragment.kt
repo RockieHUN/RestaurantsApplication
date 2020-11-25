@@ -68,26 +68,27 @@ class SplashScreenFragment : Fragment() {
 
         //check if credentials already exists
         if (preferences.containsKey("email") && preferences.containsKey("password")) {
-            myDatabaseViewModel.user.observe(viewLifecycleOwner, androidx.lifecycle.Observer {user ->
+            myDatabaseViewModel.user.observe(
+                viewLifecycleOwner,
+                androidx.lifecycle.Observer { user ->
 
-                //check if user exists in the database
-                if (user != null)
-                {
-                    //Log.d("**********************","observer SET")
+                    //check if user exists in the database
+                    if (user != null) {
+                        //Log.d("**********************","observer SET")
 
-                    //Navigate to the main menu fragment ONLY when the data is loaded
-                    myDatabaseViewModel.loadedComponents.observe(viewLifecycleOwner, androidx.lifecycle.Observer { loadedComponents ->
-                        if (loadedComponents >= 2){
-                            findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
-                        }
-                   })
-                }
-                else
-                {
-                    sharedPref.edit().clear().apply()
-                    findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
-                }
-            })
+                        //Navigate to the main menu fragment ONLY when the data is loaded
+                        myDatabaseViewModel.loadedComponents.observe(
+                            viewLifecycleOwner,
+                            androidx.lifecycle.Observer { loadedComponents ->
+                                if (loadedComponents >= 2) {
+                                    findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
+                                }
+                            })
+                    } else {
+                        sharedPref.edit().clear().apply()
+                        findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
+                    }
+                })
 
             myDatabaseViewModel.getUser(
                 preferences["email"] as String,
@@ -95,8 +96,7 @@ class SplashScreenFragment : Fragment() {
             )
 
 
-        }
-        else {
+        } else {
             sharedPref.edit().clear().apply()
             findNavController().navigate(R.id.action_splashScreenFragment_to_register2)
         }
