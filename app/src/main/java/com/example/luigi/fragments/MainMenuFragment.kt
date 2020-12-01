@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,6 +47,7 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.selectButton.text ="New York"
 
         //Add listener to the city selection button
         binding.appBarLayout.constraint_toolbarHolder.select_button.setOnClickListener{
@@ -88,18 +90,70 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
             } else requireActivity().finish()
         }
 
+        var dialog : DialogFragment? = null
 
         //OBSERVING THE DATA AND PASSING TO THE RECYCLE VIEW
         myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
             binding.recycleView.adapter = MainDataAdapter(restaurants, this)
-            binding.recycleView.layoutManager = LinearLayoutManager(context)
-            binding.recycleView.setHasFixedSize(true)
+            if (dialog != null){
+                dialog?.dismiss()
+            }
+            else{
+                //do nothing
+            }
+        })
+        binding.recycleView.layoutManager = LinearLayoutManager(context)
+        binding.recycleView.setHasFixedSize(true)
+
+        //OBSERVING THE CURRENT CITY AND LOADING THE CITY's RESTAURANTS
+        myDatabaseViewModel.currentCity.observe(viewLifecycleOwner, androidx.lifecycle.Observer { city ->
+            dialog = LoadingFragment()
+            dialog?.show(requireActivity().supportFragmentManager,"loading")
+            binding.selectButton.text = city
+            loadRestaurants(city)
         })
     }
 
-    override fun onItemClick(position: Int) {
+    override fun onItemClick(position: Int, toString: String) {
        myDatabaseViewModel.position = position
         findNavController().navigate(R.id.action_mainMenuFragment_to_detailFragment)
+    }
+
+    private fun loadRestaurants(city : String){
+
+        //reset variables
+        myDatabaseViewModel.useApi.removeObservers(viewLifecycleOwner)
+        myDatabaseViewModel.useApi.removeObservers(viewLifecycleOwner)
+        myDatabaseViewModel.useApi.value = false
+        myDatabaseViewModel.useDatabase.value = false
+
+
+
+        //observe useApi variable
+        myDatabaseViewModel.useApi.observe(viewLifecycleOwner,  { useApi ->
+            if (useApi){
+                apiViewModel.getCityRestaurants(city)
+                apiViewModel.restaurants.observe(viewLifecycleOwner,  { restaurants ->
+                    myDatabaseViewModel.restaurants.value = restaurants
+                    myDatabaseViewModel.InsertRestaurants(restaurants)
+                })
+            }
+            else{
+                //DO NOTHING
+            }
+        })
+
+        //observe useDatabase variable
+        myDatabaseViewModel.useDatabase.observe(viewLifecycleOwner,  {  useDatabase ->
+            if (useDatabase){
+                myDatabaseViewModel.loadRestaurantsFromDatabase(city, 1)
+            }
+            else{
+                // DO NOTHING
+            }
+        })
+
+        myDatabaseViewModel.getCount(city,1)
     }
 
 
