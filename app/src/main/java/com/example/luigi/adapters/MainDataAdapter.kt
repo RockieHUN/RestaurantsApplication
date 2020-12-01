@@ -30,7 +30,7 @@ class MainDataAdapter(
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION){
-                listener.onItemClick(position)
+                listener.onItemClick(position,"")
             }
         }
 
@@ -38,7 +38,7 @@ class MainDataAdapter(
 
     }
     interface OnItemClickListener{
-        fun onItemClick(position: Int)
+        fun onItemClick(position: Int, toString: String)
     }
 
 

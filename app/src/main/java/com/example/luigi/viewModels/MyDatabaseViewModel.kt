@@ -22,6 +22,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     //the loaded data will be stored in these variables
     var restaurants : MutableLiveData<List<EntityRestaurant>> = MutableLiveData<List<EntityRestaurant>>()
     var cityNames : List<String> = listOf<String>()
+    var currentCity : MutableLiveData<String> = MutableLiveData<String>()
 
     //user
     var user : MutableLiveData<EntityUser> = MutableLiveData()
