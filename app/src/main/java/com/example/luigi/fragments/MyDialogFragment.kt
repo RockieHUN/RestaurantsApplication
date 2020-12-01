@@ -1,10 +1,14 @@
 package com.example.luigi.fragments
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
@@ -13,6 +17,9 @@ import com.example.luigi.R
 import com.example.luigi.adapters.MainDataAdapter
 import com.example.luigi.adapters.SelectDataAdapter
 import com.example.luigi.databinding.FragmentMyDialogBinding
+import com.example.luigi.repository.ApiRepository
+import com.example.luigi.viewModels.ApiViewModel
+import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class MyDialogFragment : DialogFragment(), MainDataAdapter.OnItemClickListener {
@@ -41,6 +48,9 @@ class MyDialogFragment : DialogFragment(), MainDataAdapter.OnItemClickListener {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
 
+
+
+
         val recycle_view = binding.recycleView
 
 
@@ -54,8 +64,6 @@ class MyDialogFragment : DialogFragment(), MainDataAdapter.OnItemClickListener {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextChange(newText: String?): Boolean {
                 adapter.filter.filter(newText)
-                recycle_view.recycledViewPool.clear()
-                adapter.notifyDataSetChanged()
                 return true
             }
 
@@ -67,12 +75,9 @@ class MyDialogFragment : DialogFragment(), MainDataAdapter.OnItemClickListener {
 
     }
 
-    override fun onItemClick(position: Int, cityName: String) {
-        myDatabaseViewModel.currentCity.value = cityName
-        dialog?.dismiss()
+    override fun onItemClick(position: Int) {
+        TODO("Not yet implemented")
     }
-
-    // ***************** PRIVATE FUNCTIONS *************
 
 
 }
