@@ -5,10 +5,12 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.example.luigi.model.CityRestaurants
+import com.example.luigi.model.Restaurant
 import com.example.luigi.repository.MyDatabaseRepository
 import com.example.luigi.room.entities.EntityUser
 import com.example.luigi.room.MyDatabase
 import com.example.luigi.room.entities.EntityCity
+import com.example.luigi.room.entities.EntityFavorite
 import com.example.luigi.room.entities.EntityRestaurant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
@@ -127,6 +129,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
         }
     }
 
+    //remove all observers from every variable
     fun removeObservers(activity : FragmentActivity){
         viewModelScope.launch {
             restaurants.removeObservers(activity)
@@ -134,6 +137,45 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             useApi.removeObservers(activity)
             useDatabase.removeObservers(activity)
             loadedComponents.removeObservers(activity)
+        }
+    }
+
+    /*
+    this method is implementing the like (adding or removing) functionality
+    of a restaurant by determining the userId and checking if the user
+    already liked a restaurant or not
+     */
+    fun like (restaurant : EntityRestaurant){
+        viewModelScope.launch {
+            val userId = repository.getUserId(user.value!!.email)
+
+            val entityFavorite = EntityFavorite(
+                0,
+                userId,
+                restaurant.id,
+                restaurant.name,
+                restaurant.address,
+                restaurant.city,
+                restaurant.state,
+                restaurant.area,
+                restaurant.postal_code,
+                restaurant.country,
+                restaurant.phone,
+                restaurant.lat,
+                restaurant.lng,
+                restaurant.price,
+                restaurant.mobile_reserve_url,
+                restaurant.mobile_reserve_url,
+                restaurant.image_url
+            )
+            if (repository.isLiked(userId,entityFavorite.restaurantId)){
+                repository.deleteFavorite(entityFavorite.ownerId, entityFavorite.restaurantId)
+            }
+            else{
+                repository.addFavorite(entityFavorite)
+            }
+
+
         }
     }
 }

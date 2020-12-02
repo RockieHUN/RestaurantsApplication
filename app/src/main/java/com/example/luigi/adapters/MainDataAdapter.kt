@@ -3,15 +3,18 @@ package com.example.luigi.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.R
 import com.example.luigi.room.entities.EntityRestaurant
+import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class MainDataAdapter(
     private val items : List<EntityRestaurant>,
     private  val listener : OnItemClickListener,
+    private val myDatabaseViewModel: MyDatabaseViewModel
 ) : RecyclerView.Adapter<MainDataAdapter.DataViewHolder>(){
 
     inner class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{
@@ -19,8 +22,7 @@ class MainDataAdapter(
         val restaurantName = itemView.findViewById<TextView>(R.id.restaurant_name)
         val restaurantAddress = itemView.findViewById<TextView>(R.id.restaurant_address)
         val restaurantPrice = itemView.findViewById<TextView>(R.id.restaurant_price)
-
-
+        val likeButton = itemView.findViewById<ImageButton>(R.id.favoriteButton)
 
 
         init{
@@ -35,11 +37,12 @@ class MainDataAdapter(
         }
 
 
-
     }
     interface OnItemClickListener{
         fun onItemClick(position: Int, toString: String)
     }
+
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
@@ -54,9 +57,16 @@ class MainDataAdapter(
         holder.restaurantAddress.text = currentItem.address
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
 
+        holder.likeButton.setOnClickListener {
+            myDatabaseViewModel.like(currentItem)
+        }
+
+
         //TODO can I do better?
         //Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
     }
+
+
 
     override fun getItemCount(): Int = items.size
 

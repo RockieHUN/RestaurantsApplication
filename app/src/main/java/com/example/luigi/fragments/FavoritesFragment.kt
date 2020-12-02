@@ -52,7 +52,7 @@ class FavoritesFragment : Fragment(), MainDataAdapter.OnItemClickListener {
 
         //recycle view
         myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
-            binding.recycleView.adapter = MainDataAdapter(mutableListOf(), this)
+            binding.recycleView.adapter = MainDataAdapter(mutableListOf(), this, myDatabaseViewModel)
 
         })
         binding.recycleView.layoutManager = LinearLayoutManager(context)

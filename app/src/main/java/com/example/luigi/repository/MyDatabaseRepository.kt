@@ -5,6 +5,7 @@ import com.example.luigi.model.CityRestaurants
 import com.example.luigi.room.entities.EntityUser
 import com.example.luigi.room.daos.MyDatabaseDao
 import com.example.luigi.room.entities.EntityCity
+import com.example.luigi.room.entities.EntityFavorite
 import com.example.luigi.room.entities.EntityRestaurant
 import java.sql.Timestamp
 import java.time.Instant
@@ -75,5 +76,30 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     //get the list of city names
     suspend fun getCityNames() : List<String>{
         return myDatabaseDao.getCityNames()
+    }
+
+    //get user id
+    suspend fun getUserId(email : String) : Int{
+        return myDatabaseDao.getUserId(email)
+    }
+
+    //add favorite to the database
+    suspend fun addFavorite(favorite: EntityFavorite){
+        myDatabaseDao.addFavorite(favorite)
+    }
+
+    //delete favorite from database
+    suspend fun deleteFavorite(userId: Int, restaurantId: Int){
+        myDatabaseDao.deleteFavorite(userId, restaurantId)
+    }
+
+    //check if the restaurant is liked
+    suspend fun isLiked(userId: Int, restaurantId: Int) : Boolean{
+        return myDatabaseDao.isLiked(userId, restaurantId) != 0
+    }
+
+    //TODO : Innen folytatni
+    suspend fun getFavorites(userId: Int) : MutableList<EntityFavorite>?{
+        return myDatabaseDao.getFavorites(userId)
     }
 }

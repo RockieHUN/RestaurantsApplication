@@ -2,7 +2,6 @@ package com.example.luigi.room.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.luigi.model.Restaurant
 
 //TODO: PROFILE PIC
 @Entity(tableName = "user_table")

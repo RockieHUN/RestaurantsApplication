@@ -94,7 +94,7 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
 
         //OBSERVING THE DATA AND PASSING TO THE RECYCLE VIEW
         myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
-            binding.recycleView.adapter = MainDataAdapter(restaurants, this)
+            binding.recycleView.adapter = MainDataAdapter(restaurants, this,myDatabaseViewModel)
             if (dialog != null){
                 dialog?.dismiss()
             }

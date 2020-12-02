@@ -2,7 +2,6 @@ package com.example.luigi.api
 
 import com.example.luigi.model.CityNames
 import com.example.luigi.model.CityRestaurants
-import com.example.luigi.model.Restaurant
 import retrofit2.http.GET
 import retrofit2.http.Query
 

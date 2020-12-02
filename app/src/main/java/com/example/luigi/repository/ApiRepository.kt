@@ -1,10 +1,7 @@
 package com.example.luigi.repository
 
 import com.example.luigi.api.RetrofitInstance
-import com.example.luigi.model.CityNames
 import com.example.luigi.model.CityRestaurants
-import com.example.luigi.model.Restaurant
-import com.example.luigi.room.entities.EntityCity
 
 class ApiRepository {
 
