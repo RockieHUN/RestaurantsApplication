@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.luigi.R
+import com.example.luigi.adapters.FavoriteDataAdapter
 import com.example.luigi.adapters.MainDataAdapter
 import com.example.luigi.databinding.FragmentFavoritesBinding
 import com.example.luigi.viewModels.MyDatabaseViewModel
@@ -19,7 +20,7 @@ import java.util.*
 import kotlin.concurrent.timerTask
 
 
-class FavoritesFragment : Fragment(), MainDataAdapter.OnItemClickListener {
+class FavoritesFragment : Fragment(), FavoriteDataAdapter.OnItemClickListener {
 
     private lateinit var myDatabaseViewModel : MyDatabaseViewModel
     private lateinit var binding : FragmentFavoritesBinding
@@ -51,10 +52,10 @@ class FavoritesFragment : Fragment(), MainDataAdapter.OnItemClickListener {
         }
 
         //recycle view
-        myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
-            binding.recycleView.adapter = MainDataAdapter(mutableListOf(), this, myDatabaseViewModel)
 
-        })
+        binding.recycleView.adapter = FavoriteDataAdapter(myDatabaseViewModel.favorites.value!!, this, myDatabaseViewModel, viewLifecycleOwner)
+
+
         binding.recycleView.layoutManager = LinearLayoutManager(context)
         binding.recycleView.setHasFixedSize(true)
     }

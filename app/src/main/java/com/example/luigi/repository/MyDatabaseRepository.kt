@@ -98,7 +98,7 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
         return myDatabaseDao.isLiked(userId, restaurantId) != 0
     }
 
-    //TODO : Innen folytatni
+    //get favorite restaurants of a user
     suspend fun getFavorites(userId: Int) : MutableList<EntityFavorite>?{
         return myDatabaseDao.getFavorites(userId)
     }

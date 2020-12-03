@@ -94,6 +94,7 @@ class RegisterFragment : Fragment() {
                     if (secondPhaseIsValid()) {
                         saveSecondPhaseData()
                         register()
+
                         findNavController().navigate(R.id.action_register_to_mainMenuFragment)
                     }
 
@@ -253,6 +254,7 @@ class RegisterFragment : Fragment() {
         //adding user to database
         myDatabaseViewModel.addUser(user)
         myDatabaseViewModel.user.value = user
+        myDatabaseViewModel.loadFavorites()
 
 
         //saving credentials to sharedPref

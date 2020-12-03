@@ -81,6 +81,7 @@ class SplashScreenFragment : Fragment() {
                             viewLifecycleOwner,
                             androidx.lifecycle.Observer { loadedComponents ->
                                 if (loadedComponents >= 2) {
+                                    myDatabaseViewModel.loadFavorites()
                                     findNavController().navigate(R.id.action_splashScreenFragment_to_mainMenuFragment)
                                 }
                             })

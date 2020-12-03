@@ -25,6 +25,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     var restaurants : MutableLiveData<List<EntityRestaurant>> = MutableLiveData<List<EntityRestaurant>>()
     var cityNames : List<String> = listOf<String>()
     var currentCity : MutableLiveData<String> = MutableLiveData<String>()
+    var favorites : MutableLiveData<MutableList<EntityFavorite>> = MutableLiveData<MutableList<EntityFavorite>>()
 
     //user
     var user : MutableLiveData<EntityUser> = MutableLiveData()
@@ -170,12 +171,40 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             )
             if (repository.isLiked(userId,entityFavorite.restaurantId)){
                 repository.deleteFavorite(entityFavorite.ownerId, entityFavorite.restaurantId)
+                if (favorites.value != null) {
+                    if (favorites.value!!.size == 1){
+                        favorites.value = mutableListOf()
+                    }
+                    else{
+                        favorites.value!!.remove(entityFavorite)
+                    }
+
+                }
+                //favorites.value?.remove(entityFavorite)
             }
             else{
                 repository.addFavorite(entityFavorite)
+                favorites.value?.add(entityFavorite)
             }
 
 
         }
+    }
+
+    fun deleteFavorite(entityFavorite: EntityFavorite){
+        viewModelScope.launch {
+            repository.deleteFavorite(entityFavorite.ownerId, entityFavorite.restaurantId)
+            if (favorites.value != null)  favorites.value!!.remove(entityFavorite)
+        }
+    }
+
+    //load the favorite restaurants of a user
+    fun loadFavorites(){
+        viewModelScope.launch {
+            val userId = repository.getUserId(user.value!!.email)
+            val result = repository.getFavorites(userId)
+            favorites.value = result
+        }
+
     }
 }

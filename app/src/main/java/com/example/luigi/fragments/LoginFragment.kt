@@ -85,6 +85,7 @@ class LoginFragment : Fragment() {
                 edit.putString("email", email)
                 edit.putString("password", md5(password))
                 edit.apply()
+                myDatabaseViewModel.loadFavorites()
                 findNavController().navigate(R.id.action_loginFragment_to_mainMenuFragment)
             } else {
                 //TODO: THIS CANT BE ON BACKGROUND THREAD

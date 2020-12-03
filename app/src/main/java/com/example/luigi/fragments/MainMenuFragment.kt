@@ -112,6 +112,8 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
             binding.selectButton.text = city
             loadRestaurants(city)
         })
+
+
     }
 
     override fun onItemClick(position: Int, toString: String) {

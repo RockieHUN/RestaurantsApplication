@@ -1,23 +1,25 @@
 package com.example.luigi.adapters
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.R
-import com.example.luigi.room.entities.EntityRestaurant
+import com.example.luigi.room.entities.EntityFavorite
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
-class MainDataAdapter(
-    private val items : List<EntityRestaurant>,
+class FavoriteDataAdapter(
+    private val items : List<EntityFavorite>,
     private  val listener : OnItemClickListener,
-    private val myDatabaseViewModel: MyDatabaseViewModel
-) : RecyclerView.Adapter<MainDataAdapter.DataViewHolder>(){
+    private val myDatabaseViewModel: MyDatabaseViewModel,
+    private val lifecycle : LifecycleOwner
+) : RecyclerView.Adapter<FavoriteDataAdapter.DataViewHolder>(){
 
     inner class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{
         val restaurantImage = itemView.findViewById<ImageView>(R.id.restaurant_image)
@@ -58,39 +60,25 @@ class MainDataAdapter(
         holder.restaurantName.text = currentItem.name
         holder.restaurantAddress.text = currentItem.address
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
-
-
-        if (isLiked(currentItem.id)){
-            holder.likeButton.setColorFilter(Color.argb(255, 194, 39, 72))
-        }
-
+        holder.likeButton.setColorFilter(Color.argb(255, 194, 39, 72))
 
         holder.likeButton.setOnClickListener {
-            myDatabaseViewModel.like(currentItem)
+            myDatabaseViewModel.favorites.observe(lifecycle, Observer {
+                notifyDataSetChanged()
+                //TODO: remove observer
+            })
 
-            if (isLiked(currentItem.id)){
-                holder.likeButton.setColorFilter(Color.argb(255,36, 189, 28))
-            }
-            else{
-                holder.likeButton.setColorFilter(Color.argb(255, 194, 39, 72))
-            }
+            myDatabaseViewModel.deleteFavorite(currentItem)
+
         }
+
 
 
         //TODO can I do better?
         //Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
     }
 
-    private fun isLiked(currentItemId : Int): Boolean{
-        val filtered = myDatabaseViewModel.favorites.value?.filter{favorite ->
-            favorite.restaurantId == currentItemId
-        }
-        if (filtered == null) return false
-        else{
-            return filtered.isNotEmpty()
-        }
 
-    }
 
     override fun getItemCount(): Int = items.size
 
