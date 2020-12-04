@@ -5,12 +5,17 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.luigi.room.daos.MyDatabaseDao
-import com.example.luigi.room.entities.EntityCity
-import com.example.luigi.room.entities.EntityFavorite
-import com.example.luigi.room.entities.EntityRestaurant
-import com.example.luigi.room.entities.EntityUser
+import com.example.luigi.room.entities.*
 
-@Database(entities = [EntityUser::class, EntityRestaurant::class, EntityCity::class, EntityFavorite::class], version = 3,exportSchema = false)
+@Database(entities = [
+    EntityUser::class,
+    EntityRestaurant::class,
+    EntityCity::class,
+    EntityFavorite::class,
+    EntityProfilePicture::class
+                     ],
+    version = 4,
+    exportSchema = false)
 abstract class MyDatabase : RoomDatabase(){
 
     abstract fun userDao() : MyDatabaseDao

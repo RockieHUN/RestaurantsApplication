@@ -2,11 +2,8 @@ package com.example.luigi.repository
 
 import androidx.lifecycle.LiveData
 import com.example.luigi.model.CityRestaurants
-import com.example.luigi.room.entities.EntityUser
 import com.example.luigi.room.daos.MyDatabaseDao
-import com.example.luigi.room.entities.EntityCity
-import com.example.luigi.room.entities.EntityFavorite
-import com.example.luigi.room.entities.EntityRestaurant
+import com.example.luigi.room.entities.*
 import java.sql.Timestamp
 import java.time.Instant
 import java.time.ZoneOffset
@@ -101,5 +98,25 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     //get favorite restaurants of a user
     suspend fun getFavorites(userId: Int) : MutableList<EntityFavorite>?{
         return myDatabaseDao.getFavorites(userId)
+    }
+
+    //add profile image to database
+    suspend fun addProfileImage(image : EntityProfilePicture){
+        myDatabaseDao.addProfileImage(image)
+    }
+
+    //delete profile image
+    suspend fun deleteProfileImage(userId: Int){
+        myDatabaseDao.deleteProfileImage(userId)
+    }
+
+    //check if the user has a profile image
+    suspend fun profileImageIsExists(userId: Int) : Boolean{
+        return myDatabaseDao.profileImageIsExists(userId) > 0
+    }
+
+    //get the profile image of the user as byteArray
+    suspend fun getProfileImage(userId: Int): EntityProfilePicture{
+        return myDatabaseDao.getProfileImage(userId)
     }
 }

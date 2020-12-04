@@ -7,11 +7,8 @@ import androidx.lifecycle.*
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
 import com.example.luigi.repository.MyDatabaseRepository
-import com.example.luigi.room.entities.EntityUser
 import com.example.luigi.room.MyDatabase
-import com.example.luigi.room.entities.EntityCity
-import com.example.luigi.room.entities.EntityFavorite
-import com.example.luigi.room.entities.EntityRestaurant
+import com.example.luigi.room.entities.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -29,6 +26,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
 
     //user
     var user : MutableLiveData<EntityUser> = MutableLiveData()
+    var profileImage : MutableLiveData <EntityProfilePicture> = MutableLiveData<EntityProfilePicture>()
 
     //used for determining from where the data should be loaded (SplashScreen)
     var useDatabase : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
@@ -206,5 +204,26 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             favorites.value = result
         }
 
+    }
+
+    fun addProfileImage(image : ByteArray){
+        viewModelScope.launch(Dispatchers.IO){
+            val userId = repository.getUserId(user.value!!.email)
+
+            val entityProfilePicture = EntityProfilePicture(
+                0,
+                userId,
+                image
+            )
+            repository.deleteProfileImage(userId)
+            repository.addProfileImage(entityProfilePicture)
+        }
+    }
+
+    fun loadProfileImage(){
+        viewModelScope.launch {
+            val userId = repository.getUserId(user.value!!.email)
+            if (repository.profileImageIsExists(userId)) profileImage.value = repository.getProfileImage(userId)
+        }
     }
 }

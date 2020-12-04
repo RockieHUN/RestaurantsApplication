@@ -2,10 +2,7 @@ package com.example.luigi.room.daos
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.luigi.room.entities.EntityCity
-import com.example.luigi.room.entities.EntityFavorite
-import com.example.luigi.room.entities.EntityRestaurant
-import com.example.luigi.room.entities.EntityUser
+import com.example.luigi.room.entities.*
 
 @Dao
 interface MyDatabaseDao {
@@ -55,7 +52,15 @@ interface MyDatabaseDao {
     @Query("Select * from favorite_table where ownerId = :userId")
     suspend fun getFavorites(userId : Int) : MutableList<EntityFavorite>?
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addProfileImage(image : EntityProfilePicture)
 
+    @Query("Select COUNT(*) from profile_pictures where userId = :userId")
+    suspend fun profileImageIsExists(userId : Int) : Int
 
+    @Query("Delete from profile_pictures where userId = :userId")
+    suspend fun deleteProfileImage(userId: Int)
 
+    @Query("Select * from profile_pictures where userId = :userId LIMIT 1")
+    suspend fun getProfileImage(userId : Int) : EntityProfilePicture
 }
