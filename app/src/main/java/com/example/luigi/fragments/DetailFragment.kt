@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.luigi.MapsActivity
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentDetailBinding
+import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class DetailFragment : Fragment() {
@@ -36,11 +37,11 @@ class DetailFragment : Fragment() {
 
         //open map
         binding.mapButton.setOnClickListener {
-            val restaurant = myDatabaseViewModel.restaurants.value?.get(myDatabaseViewModel.position)
+            val restaurant = getRestaurant()
             val intent = Intent(context, MapsActivity::class.java).apply {
-                putExtra("lat",restaurant?.lat)
-                putExtra("long",restaurant?.lng)
-                putExtra("name",restaurant?.name)
+                putExtra("lat",restaurant.lat)
+                putExtra("long",restaurant.lng)
+                putExtra("name",restaurant.name)
             }
             startActivity(intent)
         }
@@ -50,7 +51,7 @@ class DetailFragment : Fragment() {
         }
 
         myDatabaseViewModel.restaurants.observe(requireActivity(), Observer { list ->
-            val restaurant = list[myDatabaseViewModel.position]
+            val restaurant = getRestaurant()
 
             val city = "${restaurant.country}, ${restaurant.city}"
             val price = "Price: $" + restaurant.price.toString()
@@ -61,6 +62,12 @@ class DetailFragment : Fragment() {
             binding.restaurantTelephone.text = restaurant.phone
             binding.restaurantPrice.text = price
         })
+    }
+
+    private fun getRestaurant() : EntityRestaurant {
+        return myDatabaseViewModel.restaurants.value!!.find { restaurant ->
+            restaurant.name == myDatabaseViewModel.restaurantName
+        }!!
     }
 
 }

@@ -5,19 +5,20 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.R
 import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.viewModels.MyDatabaseViewModel
+import java.util.*
 
 class MainDataAdapter(
     private val items : List<EntityRestaurant>,
     private  val listener : OnItemClickListener,
     private val myDatabaseViewModel: MyDatabaseViewModel
-) : RecyclerView.Adapter<MainDataAdapter.DataViewHolder>(){
+) : RecyclerView.Adapter<MainDataAdapter.DataViewHolder>(), Filterable{
+
+    var filteredList = items
 
     inner class DataViewHolder(itemView : View) : RecyclerView.ViewHolder (itemView), View.OnClickListener{
         val restaurantImage = itemView.findViewById<ImageView>(R.id.restaurant_image)
@@ -34,7 +35,7 @@ class MainDataAdapter(
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION){
-                listener.onItemClick(position,"")
+                listener.onItemClick(position, restaurantName.text.toString())
             }
         }
 
@@ -54,7 +55,7 @@ class MainDataAdapter(
     }
 
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
-        val currentItem = items [position]
+        val currentItem = filteredList [position]
         holder.restaurantName.text = currentItem.name
         holder.restaurantAddress.text = currentItem.address
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
@@ -81,6 +82,8 @@ class MainDataAdapter(
         //Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
     }
 
+    override fun getItemCount(): Int = filteredList.size
+
     private fun isLiked(currentItemId : Int): Boolean{
         val filtered = myDatabaseViewModel.favorites.value?.filter{favorite ->
             favorite.restaurantId == currentItemId
@@ -92,6 +95,37 @@ class MainDataAdapter(
 
     }
 
-    override fun getItemCount(): Int = items.size
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+
+                //if search is empty return all restaurant
+                if (charSearch.isEmpty()) {
+                    filteredList = items
+                }
+                else {
+
+                    //filter restaurants by name
+                    filteredList = items.filter { item ->
+                        item.name.toLowerCase(Locale.ROOT)
+                            .contains(constraint.toString().toLowerCase(Locale.ROOT))
+                    }.toMutableList()
+
+                }
+
+                val filterResults = FilterResults()
+                filterResults.values = filteredList
+                return filterResults
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                filteredList = results?.values as List<EntityRestaurant>
+                notifyDataSetChanged()
+            }
+        }
+    }
 
 }

@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
+import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
@@ -92,9 +94,13 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
 
         var dialog : DialogFragment? = null
 
+
+        var adapter : MainDataAdapter? = null
+
         //OBSERVING THE DATA AND PASSING TO THE RECYCLE VIEW
         myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
-            binding.recycleView.adapter = MainDataAdapter(restaurants, this,myDatabaseViewModel)
+            adapter = MainDataAdapter(restaurants, this,myDatabaseViewModel)
+            binding.recycleView.adapter = adapter
             if (dialog != null){
                 dialog?.dismiss()
             }
@@ -113,11 +119,27 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
             loadRestaurants(city)
         })
 
+        //SearchView
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (adapter != null) {
+                    adapter!!.filter.filter(newText)
+                    binding.recycleView.recycledViewPool.clear()
+                    adapter!!.notifyDataSetChanged()
+                }
+                return true
+            }
+        })
+
 
     }
 
-    override fun onItemClick(position: Int, toString: String) {
-       myDatabaseViewModel.position = position
+    override fun onItemClick(position: Int, restaurantName: String) {
+       myDatabaseViewModel.restaurantName = restaurantName
         findNavController().navigate(R.id.action_mainMenuFragment_to_detailFragment)
     }
 

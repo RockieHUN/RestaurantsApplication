@@ -28,12 +28,13 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     var user : MutableLiveData<EntityUser> = MutableLiveData()
     var profileImage : MutableLiveData <EntityProfilePicture> = MutableLiveData<EntityProfilePicture>()
 
-    //used for determining from where the data should be loaded (SplashScreen)
+    //used for determining from where the data should be loaded (From internet or database)
     var useDatabase : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var useApi : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
     var loadedComponents : MutableLiveData<Int> = MutableLiveData<Int>()
 
     //used for communication between recycleView and Detail Fragment
+    var restaurantName : String = "Orsay"
     var position : Int = 0
 
 
