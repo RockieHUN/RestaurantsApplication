@@ -9,19 +9,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
-import androidx.core.net.toFile
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentProfileBinding
 import com.example.luigi.utils.ImageUtils
 import com.example.luigi.viewModels.MyDatabaseViewModel
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
-import java.util.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class ProfileFragment : Fragment() {
@@ -59,10 +57,9 @@ class ProfileFragment : Fragment() {
         binding.profilePhone.text = user?.phone_number
 
         //load profile image
-        myDatabaseViewModel.profileImage.observe(viewLifecycleOwner,  { entityProfilePicture ->
-            if (entityProfilePicture != null){
-                val bitmap = ImageUtils.toBitmap(entityProfilePicture.image!!)
-                binding.profilePicture.setImageBitmap(bitmap)
+        myDatabaseViewModel.profileImage.observe(viewLifecycleOwner,  { image ->
+            if (image != null){
+                binding.profilePicture.setImageBitmap(image)
             }
         })
         myDatabaseViewModel.loadProfileImage()
@@ -81,7 +78,7 @@ class ProfileFragment : Fragment() {
 
         //upload image
         binding.editProfilePicture.setOnClickListener {
-            pickImageFromGalery()
+            pickImageFromGallery()
         }
 
     }
@@ -94,18 +91,28 @@ class ProfileFragment : Fragment() {
             val imageUri = data.data
 
             //set profile image
-            binding.profilePicture.setImageURI(imageUri)
+            myDatabaseViewModel.profileImage.observe(viewLifecycleOwner,{bitmap ->
+                binding.profilePicture.setImageBitmap(bitmap)
+            })
 
-            //convert image to byteArray with custom library
-            val byteArray = ImageUtils.toByteArray(requireActivity(),imageUri!!)
+            val scope = CoroutineScope(Dispatchers.IO)
+            scope.launch {
 
-            //save byteArray to the database
-            myDatabaseViewModel.addProfileImage(byteArray!!)
+                //convert uri to bitmap and scale down
+                val bitmap = ImageUtils.uriToScaledBitmap(requireActivity(), imageUri!!)
+                myDatabaseViewModel.profileImage.postValue(bitmap)
+
+                //convert bitmap to byteArray
+                val byteArray = ImageUtils.bitmapToByteArray(bitmap!!)
+
+                //save byteArray to the database
+                myDatabaseViewModel.addProfileImage(byteArray!!)
+            }
         }
     }
 
     //starting an activity to get a pickture
-    private fun pickImageFromGalery(){
+    private fun pickImageFromGallery(){
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT

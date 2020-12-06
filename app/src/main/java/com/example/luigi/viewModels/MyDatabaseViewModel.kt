@@ -1,6 +1,7 @@
 package com.example.luigi.viewModels
 
 import android.app.Application
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
@@ -9,6 +10,7 @@ import com.example.luigi.model.Restaurant
 import com.example.luigi.repository.MyDatabaseRepository
 import com.example.luigi.room.MyDatabase
 import com.example.luigi.room.entities.*
+import com.example.luigi.utils.ImageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -26,7 +28,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
 
     //user
     var user : MutableLiveData<EntityUser> = MutableLiveData()
-    var profileImage : MutableLiveData <EntityProfilePicture> = MutableLiveData<EntityProfilePicture>()
+    var profileImage : MutableLiveData <Bitmap> = MutableLiveData<Bitmap>()
 
     //used for determining from where the data should be loaded (From internet or database)
     var useDatabase : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
@@ -222,9 +224,13 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     }
 
     fun loadProfileImage(){
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val userId = repository.getUserId(user.value!!.email)
-            if (repository.profileImageIsExists(userId)) profileImage.value = repository.getProfileImage(userId)
+            if (repository.profileImageIsExists(userId)){
+                val byteArray = repository.getProfileImage(userId).image
+                val bitmap = ImageUtils.byteArrayToBitmap(byteArray!!)
+                profileImage.postValue(bitmap)
+            }
         }
     }
 }
