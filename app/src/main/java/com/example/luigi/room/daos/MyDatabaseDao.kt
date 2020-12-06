@@ -63,4 +63,16 @@ interface MyDatabaseDao {
 
     @Query("Select * from profile_pictures where userId = :userId LIMIT 1")
     suspend fun getProfileImage(userId : Int) : EntityProfilePicture
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun addRestaurantImage(image : EntityRestaurantPicture)
+
+    @Query("SELECT COUNT(*) from restaurant_pictures where restaurantId = :restaurantId")
+    suspend fun getRestaurantPictureCount(restaurantId : Int) : Int
+
+    @Query("SELECT * from restaurant_pictures where restaurantId = :restaurantId LIMIT 1")
+    suspend fun getOneRestaurantPicture(restaurantId: Int)  : EntityRestaurantPicture
+
+    @Query("SELECT * from restaurant_pictures where restaurantId = :restaurantId")
+    suspend fun getAllRestaurantPicture(restaurantId: Int) : MutableList<EntityRestaurantPicture>
 }

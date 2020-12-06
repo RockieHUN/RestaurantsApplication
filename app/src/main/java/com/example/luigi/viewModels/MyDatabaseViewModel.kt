@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
+import com.example.luigi.model.RestaurantPicture
 import com.example.luigi.repository.MyDatabaseRepository
 import com.example.luigi.room.MyDatabase
 import com.example.luigi.room.entities.*
@@ -38,6 +39,9 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     //used for communication between recycleView and Detail Fragment
     var restaurantName : String = "Orsay"
     var position : Int = 0
+
+    //restaurant
+    var restaurantPictures : MutableLiveData<MutableList<RestaurantPicture>> = MutableLiveData<MutableList<RestaurantPicture>>()
 
 
     //INIT
@@ -209,6 +213,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
 
     }
 
+    //insert a profile image to the database as ByteArray
     fun addProfileImage(image : ByteArray){
         viewModelScope.launch(Dispatchers.IO){
             val userId = repository.getUserId(user.value!!.email)
@@ -223,6 +228,10 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
         }
     }
 
+    /*
+    get the profile picture of the user from database as ByteArray
+    then convert it to Bitmap
+     */
     fun loadProfileImage(){
         viewModelScope.launch(Dispatchers.IO) {
             val userId = repository.getUserId(user.value!!.email)
@@ -230,6 +239,47 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
                 val byteArray = repository.getProfileImage(userId).image
                 val bitmap = ImageUtils.byteArrayToBitmap(byteArray!!)
                 profileImage.postValue(bitmap)
+            }
+        }
+    }
+
+    //add an image to a restaurant
+    fun addRestaurantImage(image : ByteArray, restaurantId : Int){
+        viewModelScope.launch (Dispatchers.IO){
+            val userId= repository.getUserId(user.value!!.email)
+
+            val entityRestaurantPicture = EntityRestaurantPicture(
+                0,
+                restaurantId,
+                userId,
+                image
+            )
+            repository.addRestaurantPicture(entityRestaurantPicture)
+        }
+    }
+
+    fun loadRestaurantPictures(restaurantId: Int){
+        viewModelScope.launch (Dispatchers.IO){
+            val count = repository.getRestaurantPictureCount(restaurantId)
+            if (count > 0){
+                //get byteRestaurants
+                val response =repository.getAllRestaurantPicture(restaurantId)
+                val list : MutableList<RestaurantPicture> = mutableListOf()
+
+                //convert byteRestaurants to bitmapRestaurants
+                for (byteRestaurant in response){
+                    val newItem = RestaurantPicture(
+                        byteRestaurant.restaurantPictureId,
+                        byteRestaurant.restaurantId,
+                        byteRestaurant.userId,
+                        ImageUtils.byteArrayToBitmap(byteRestaurant.image!!)
+                    )
+                    list.add(newItem)
+                }
+                restaurantPictures.postValue(list)
+            }
+            else{
+                restaurantPictures.postValue(mutableListOf())
             }
         }
     }

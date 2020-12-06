@@ -12,9 +12,10 @@ import com.example.luigi.room.entities.*
     EntityRestaurant::class,
     EntityCity::class,
     EntityFavorite::class,
-    EntityProfilePicture::class
+    EntityProfilePicture::class,
+    EntityRestaurantPicture::class
                      ],
-    version = 4,
+    version = 7,
     exportSchema = false)
 abstract class MyDatabase : RoomDatabase(){
 

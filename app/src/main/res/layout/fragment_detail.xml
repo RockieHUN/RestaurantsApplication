@@ -7,9 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".fragments.DetailFragment">
 
+    <ImageButton
+        android:id="@+id/addImage_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:background="@null"
+        android:tint="@color/green"
+        android:src="@drawable/ic_baseline_add_circle_outline_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_address" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/restaurant_profilePicture"
         android:layout_width="match_parent"
         android:layout_height="177dp"
         android:src="@drawable/alap"
@@ -29,7 +40,7 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_profilePicture" />
 
     <TextView
         android:id="@+id/restaurant_city"
@@ -98,7 +109,7 @@
         android:layout_marginStart="10dp"
         android:contentDescription="@string/icon_contentDescription"
         android:layout_marginTop="10dp"
-        android:src="@android:drawable/ic_menu_call"
+        android:src="@drawable/ic_baseline_call_24"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_address" />
 

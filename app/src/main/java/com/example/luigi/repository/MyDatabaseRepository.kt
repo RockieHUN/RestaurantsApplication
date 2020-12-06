@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.room.daos.MyDatabaseDao
 import com.example.luigi.room.entities.*
+import org.w3c.dom.Entity
 import java.sql.Timestamp
 import java.time.Instant
 import java.time.ZoneOffset
@@ -118,5 +119,22 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     //get the profile image of the user as byteArray
     suspend fun getProfileImage(userId: Int): EntityProfilePicture{
         return myDatabaseDao.getProfileImage(userId)
+    }
+
+    //
+    suspend fun addRestaurantPicture(image : EntityRestaurantPicture){
+        myDatabaseDao.addRestaurantImage(image)
+    }
+
+    suspend fun getRestaurantPictureCount(restaurantId: Int) : Int{
+        return myDatabaseDao.getRestaurantPictureCount(restaurantId)
+    }
+
+    suspend fun getOneRestaurantPicture(restaurantId: Int) : EntityRestaurantPicture{
+        return myDatabaseDao.getOneRestaurantPicture(restaurantId)
+    }
+
+    suspend fun getAllRestaurantPicture(restaurantId: Int) : MutableList<EntityRestaurantPicture>{
+        return myDatabaseDao.getAllRestaurantPicture(restaurantId)
     }
 }
