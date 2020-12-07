@@ -22,6 +22,7 @@
     <ImageView
         android:id="@+id/restaurant_profilePicture"
         android:layout_width="match_parent"
+        android:scaleType="centerCrop"
         android:layout_height="177dp"
         android:src="@drawable/alap"
         android:contentDescription="@string/content_description"
@@ -79,13 +80,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/restaurant_image" />
+        app:layout_constraintTop_toBottomOf="@+id/recycle_view" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/restaurant_image"
+
+        android:id="@+id/recycle_view"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="200dp"
         android:layout_marginTop="15dp"
+        android:scrollbars="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,16 +116,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restaurant_address" />
 
-    <Button
+    <ImageButton
         android:id="@+id/map_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/green"
-        android:layout_marginTop="10dp"
-        android:text="@string/open_map"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:background="@null"
+        android:src="@drawable/ic_baseline_map_24"
+        android:tint="@color/green"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/restaurant_price" />
+        app:layout_constraintTop_toBottomOf="@+id/restaurant_profilePicture" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

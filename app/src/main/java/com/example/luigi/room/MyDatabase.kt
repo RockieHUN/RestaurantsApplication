@@ -15,7 +15,7 @@ import com.example.luigi.room.entities.*
     EntityProfilePicture::class,
     EntityRestaurantPicture::class
                      ],
-    version = 7,
+    version = 9,
     exportSchema = false)
 abstract class MyDatabase : RoomDatabase(){
 

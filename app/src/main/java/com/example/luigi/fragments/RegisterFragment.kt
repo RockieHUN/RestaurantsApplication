@@ -254,7 +254,7 @@ class RegisterFragment : Fragment() {
         //adding user to database
         myDatabaseViewModel.addUser(user)
         myDatabaseViewModel.user.value = user
-        myDatabaseViewModel.loadFavorites()
+        //myDatabaseViewModel.loadFavorites()
 
 
         //saving credentials to sharedPref

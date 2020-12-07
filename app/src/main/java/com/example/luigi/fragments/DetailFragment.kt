@@ -11,9 +11,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.luigi.MapsActivity
 import com.example.luigi.R
+import com.example.luigi.adapters.ImageAdapter
+import com.example.luigi.adapters.MainDataAdapter
 import com.example.luigi.databinding.FragmentDetailBinding
+import com.example.luigi.model.RestaurantPicture
 import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.utils.ImageUtils
 import com.example.luigi.viewModels.MyDatabaseViewModel
@@ -21,9 +25,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailFragment : Fragment() {
+class DetailFragment : Fragment(), ImageAdapter.OnItemClickListener {
     private lateinit var binding: FragmentDetailBinding
     private lateinit var myDatabaseViewModel: MyDatabaseViewModel
+    private lateinit var restaurant : EntityRestaurant
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,28 +45,35 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         //database viewModel
         myDatabaseViewModel = requireActivity().run {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
 
-        val restaurant = getRestaurant()
+        //reset picture list
+        myDatabaseViewModel.restaurantPictures.value = mutableListOf()
+
+        restaurant = getRestaurant()
 
         //load restaurant images
         myDatabaseViewModel.restaurantPictures.observe(viewLifecycleOwner,{pictureList ->
             if (pictureList.size > 0){
                 binding.restaurantProfilePicture.setImageBitmap(pictureList[0].image)
-                if (pictureList.size > 1){
-                    //TODO: add images to adapter
-                }
-                else{
-                    //do nothing
-                }
+
+                val adapter = ImageAdapter(pictureList , this, myDatabaseViewModel)
+                binding.recycleView.adapter = adapter
+
             }
             else{
                 // do nothing
             }
         })
+        val horizontalLayout = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.recycleView.layoutManager = horizontalLayout
+        binding.recycleView.setHasFixedSize(true)
+
         myDatabaseViewModel.loadRestaurantPictures(restaurant.id)
 
 
@@ -129,8 +141,19 @@ class DetailFragment : Fragment() {
 
                 //save byteArray to the database
                 myDatabaseViewModel.addRestaurantImage(byteArray!!, getRestaurant().id)
+
+                //refresh list
+                val list = myDatabaseViewModel.restaurantPictures.value
+                val userId = myDatabaseViewModel.getUserId(myDatabaseViewModel.user.value!!.email)
+                val pictureClass = RestaurantPicture(0,restaurant.id,userId,bitmap)
+                list!!.add(pictureClass)
+                myDatabaseViewModel.restaurantPictures.postValue(list)
             }
         }
+    }
+
+    override fun onItemClick(position: Int) {
+        return
     }
 
 }

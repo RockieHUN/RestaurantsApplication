@@ -49,6 +49,14 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //DATABASE VIEWMODEL
+        myDatabaseViewModel = requireActivity().run {
+            ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
+        }
+
+        //reset picture list
+        myDatabaseViewModel.restaurantPictures.value = mutableListOf()
+
         binding.selectButton.text ="New York"
 
         //Add listener to the city selection button
@@ -66,10 +74,6 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
         apiViewModel =
             ViewModelProvider(requireActivity(), viewModelFactory).get(ApiViewModel::class.java)
 
-        //DATABASE VIEWMODEL
-        myDatabaseViewModel = requireActivity().run {
-            ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
-        }
         //remove observers set on previous fragments
         myDatabaseViewModel.removeObservers(requireActivity())
 

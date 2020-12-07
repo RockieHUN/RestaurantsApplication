@@ -66,6 +66,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     fun addUser(entityUser: EntityUser) {
         viewModelScope.launch(Dispatchers.IO) {
             repository.addUser(entityUser)
+            loadFavorites()
         }
     }
 
@@ -254,8 +255,14 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
                 userId,
                 image
             )
+            //add to database
             repository.addRestaurantPicture(entityRestaurantPicture)
+
         }
+    }
+
+    suspend fun getUserId(email : String) : Int{
+        return repository.getUserId(user.value!!.email)
     }
 
     fun loadRestaurantPictures(restaurantId: Int){

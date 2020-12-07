@@ -40,13 +40,10 @@ class FavoriteDataAdapter(
             }
         }
 
-
     }
     interface OnItemClickListener{
         fun onItemClick(position: Int, toString: String)
     }
-
-
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
@@ -72,13 +69,7 @@ class FavoriteDataAdapter(
 
         }
 
-
-
-        //TODO can I do better?
-        //Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
     }
-
-
 
     override fun getItemCount(): Int = items.size
 

@@ -12,7 +12,6 @@ class ImageUtils {
     companion object{
 
         suspend fun uriToByteArray(activity : Activity, uri : Uri): ByteArray?{
-            //var os = ByteArrayOutputStream()
             val inputStream = activity.contentResolver.openInputStream(uri)
             val byteArray = inputStream?.readBytes()
 
@@ -31,22 +30,47 @@ class ImageUtils {
             val byteArray = inputStream?.readBytes()
 
             if (byteArray != null) {
-                val bitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.size)
+                var bitmap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.size)
 
                 var height = bitmap.height
                 var width = bitmap.width
 
+                val maxRes = 1080
                 //if the image is too big, resize
-                if (height > 1000 || width > 1000){
-                    height = (height * 0.75 ).toInt()
-                    width = (width * 0.75).toInt()
-                }
+                if (height > maxRes || width >maxRes) bitmap = resizeImage(bitmap, maxRes)
 
-                return Bitmap.createScaledBitmap(bitmap, height, width,false)
+                return bitmap
             }
             return null
         }
 
+        private fun resizeImage(image : Bitmap, maxRes : Int) : Bitmap{
+
+
+            if (image.height >= image.width) {
+                if (image.height <= maxRes) { // if image height already smaller than the required height
+                    return image
+                }
+
+                val aspectRatio = image.width.toDouble() / image.height.toDouble()
+                val targetWidth = (maxRes * aspectRatio).toInt()
+
+                val result = Bitmap.createScaledBitmap(image, targetWidth, maxRes, false)
+                return result
+
+            } else {
+                if (image.width <= maxRes) { // if image width already smaller than the required width
+                    return image
+                }
+
+                val aspectRatio = image.height.toDouble() / image.width.toDouble()
+                val targetHeight = (maxRes * aspectRatio).toInt()
+
+                val result = Bitmap.createScaledBitmap(image, maxRes, targetHeight, false)
+                return result
+            }
+
+        }
 
         suspend fun bitmapToByteArray(bitmap : Bitmap) : ByteArray{
             val stream = ByteArrayOutputStream()

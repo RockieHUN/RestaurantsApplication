@@ -14,7 +14,7 @@ data class EntityFavorite (
     val city : String,
     val state : String,
     val area : String,
-    val postal_code: Int,
+    val postal_code: String,
     val country : String,
     val phone : String,
     val lat: Double,
