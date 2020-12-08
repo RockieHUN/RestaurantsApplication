@@ -18,6 +18,7 @@ import com.example.luigi.adapters.MainDataAdapter
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentMainMenuBinding
 import com.example.luigi.repository.ApiRepository
+import com.example.luigi.utils.ClassConverter
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
@@ -53,6 +54,8 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
         myDatabaseViewModel = requireActivity().run {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
+
+
 
         //reset picture list
         myDatabaseViewModel.restaurantPictures.value = mutableListOf()
@@ -162,7 +165,7 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
             if (useApi){
                 apiViewModel.getCityRestaurants(city)
                 apiViewModel.restaurants.observe(viewLifecycleOwner,  { restaurants ->
-                    myDatabaseViewModel.restaurants.value = restaurants
+                    myDatabaseViewModel.restaurants.value = ClassConverter.listRestaurantToWithPicture(restaurants)
                     myDatabaseViewModel.InsertRestaurants(restaurants)
                 })
             }

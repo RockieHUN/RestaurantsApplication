@@ -1,5 +1,6 @@
 package com.example.luigi.room.entities
 
+import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

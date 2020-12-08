@@ -8,12 +8,13 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.R
+import com.example.luigi.model.RestaurantWithPicture
 import com.example.luigi.room.entities.EntityRestaurant
 import com.example.luigi.viewModels.MyDatabaseViewModel
 import java.util.*
 
 class MainDataAdapter(
-    private val items : List<EntityRestaurant>,
+    private val items : List<RestaurantWithPicture>,
     private  val listener : OnItemClickListener,
     private val myDatabaseViewModel: MyDatabaseViewModel
 ) : RecyclerView.Adapter<MainDataAdapter.DataViewHolder>(), Filterable{
@@ -59,6 +60,9 @@ class MainDataAdapter(
         holder.restaurantName.text = currentItem.name
         holder.restaurantAddress.text = currentItem.address
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
+
+        //if the image is null keep the placeholder
+        if (currentItem.image!=null)  holder.restaurantImage.setImageBitmap(currentItem.image)
 
 
         if (isLiked(currentItem.id)){
@@ -122,7 +126,7 @@ class MainDataAdapter(
             }
 
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                filteredList = results?.values as List<EntityRestaurant>
+                filteredList = results?.values as List<RestaurantWithPicture>
                 notifyDataSetChanged()
             }
         }

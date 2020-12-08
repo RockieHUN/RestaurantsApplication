@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.luigi.R
 import com.example.luigi.databinding.FragmentSplashScreenBinding
 import com.example.luigi.repository.ApiRepository
+import com.example.luigi.utils.ClassConverter
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
@@ -129,7 +130,7 @@ class SplashScreenFragment : Fragment() {
                         androidx.lifecycle.Observer { restaurants ->
                             //save the restaurants to the database
                             myDatabaseViewModel.InsertRestaurants(restaurants)
-                            myDatabaseViewModel.restaurants.value = restaurants
+                            myDatabaseViewModel.restaurants.value = ClassConverter.listRestaurantToWithPicture(restaurants)
                             myDatabaseViewModel.componentLoaded()
                         })
 

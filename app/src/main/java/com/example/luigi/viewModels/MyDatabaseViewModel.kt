@@ -8,9 +8,11 @@ import androidx.lifecycle.*
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.model.Restaurant
 import com.example.luigi.model.RestaurantPicture
+import com.example.luigi.model.RestaurantWithPicture
 import com.example.luigi.repository.MyDatabaseRepository
 import com.example.luigi.room.MyDatabase
 import com.example.luigi.room.entities.*
+import com.example.luigi.utils.ClassConverter
 import com.example.luigi.utils.ImageUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitAll
@@ -22,7 +24,8 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     private val repository: MyDatabaseRepository
 
     //the loaded data will be stored in these variables
-    var restaurants : MutableLiveData<List<EntityRestaurant>> = MutableLiveData<List<EntityRestaurant>>()
+    var restaurants : MutableLiveData<List<RestaurantWithPicture>> = MutableLiveData<List<RestaurantWithPicture>>()
+    var restaurantProfiles : MutableLiveData <MutableList<RestaurantPicture>> = MutableLiveData<MutableList<RestaurantPicture>>()
     var cityNames : List<String> = listOf<String>()
     var currentCity : MutableLiveData<String> = MutableLiveData<String>()
     var favorites : MutableLiveData<MutableList<EntityFavorite>> = MutableLiveData<MutableList<EntityFavorite>>()
@@ -40,7 +43,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     var restaurantName : String = "Orsay"
     var position : Int = 0
 
-    //restaurant
+    //restaurantPictures
     var restaurantPictures : MutableLiveData<MutableList<RestaurantPicture>> = MutableLiveData<MutableList<RestaurantPicture>>()
 
 
@@ -106,7 +109,19 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
      */
     fun loadRestaurantsFromDatabase(city: String, page: Int){
         viewModelScope.launch {
-            restaurants.value = repository.getRestaurants(city, page)
+            val entities = repository.getRestaurants(city, page)
+            val models = mutableListOf<RestaurantWithPicture>()
+            for (entity in entities){
+
+                var image : Bitmap? = null
+                if (repository.getRestaurantPictureCount(entity.id)> 0)
+                    image = ImageUtils.byteArrayToBitmap(repository.getOneRestaurantPicture(entity.id).image!!)
+
+                val model = ClassConverter.restaurantToWithPicture(entity)
+                model.image = image
+                models.add(model)
+            }
+            restaurants.value = models
             componentLoaded()
         }
     }
@@ -152,7 +167,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     of a restaurant by determining the userId and checking if the user
     already liked a restaurant or not
      */
-    fun like (restaurant : EntityRestaurant){
+    fun like (restaurant : RestaurantWithPicture){
         viewModelScope.launch {
             val userId = repository.getUserId(user.value!!.email)
 
@@ -261,10 +276,12 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
         }
     }
 
+    //get the userId of a user with email
     suspend fun getUserId(email : String) : Int{
         return repository.getUserId(user.value!!.email)
     }
 
+    //load every picture of a restaurant
     fun loadRestaurantPictures(restaurantId: Int){
         viewModelScope.launch (Dispatchers.IO){
             val count = repository.getRestaurantPictureCount(restaurantId)
@@ -288,6 +305,42 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             else{
                 restaurantPictures.postValue(mutableListOf())
             }
+        }
+    }
+
+    fun loadRestaurantProfiles(){
+        viewModelScope.launch {
+            if (restaurants.value != null){
+
+                //init temp list
+                val list : MutableList<RestaurantPicture> = mutableListOf()
+
+                //iterate through the restaurants
+                for ( restaurant in restaurants.value!!){
+
+                    //if the restaurant has at least one picture get it and convert it to bitmap
+                    if (repository.getRestaurantPictureCount(restaurant.id)> 0){
+
+                        val byteArrayClass = repository.getOneRestaurantPicture(restaurant.id)
+                        val bitmap = ImageUtils.byteArrayToBitmap(byteArrayClass.image!!)
+                        val bitmapClass = RestaurantPicture(
+                            byteArrayClass.restaurantPictureId,
+                            restaurant.id,
+                            byteArrayClass.userId,
+                            bitmap)
+
+                        list.add(bitmapClass)
+                    }
+                    else{
+                        // do nothing
+                    }
+                }
+                restaurantProfiles.value = list
+            }
+            else{
+                //do nothing
+            }
+
         }
     }
 }

@@ -75,4 +75,6 @@ interface MyDatabaseDao {
 
     @Query("SELECT * from restaurant_pictures where restaurantId = :restaurantId")
     suspend fun getAllRestaurantPicture(restaurantId: Int) : MutableList<EntityRestaurantPicture>
+
+
 }
