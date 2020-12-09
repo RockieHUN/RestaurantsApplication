@@ -65,9 +65,7 @@ class ProfileFragment : Fragment() {
 
         //On logout, clear shared preferences and navigate to the login fragment
         binding.logoutButton.setOnClickListener{
-            sharedPref= requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
-            sharedPref.edit().clear().apply()
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+            logout()
         }
 
         //onBackPressed, navigate to the main menu
@@ -116,5 +114,14 @@ class ProfileFragment : Fragment() {
         intent.type = "image/*"
         intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(intent, 1)
+    }
+
+    private fun logout(){
+        sharedPref= requireContext().getSharedPreferences("credentials", Context.MODE_PRIVATE)
+        sharedPref.edit().clear().apply()
+        myDatabaseViewModel.user.value = null
+        myDatabaseViewModel.profileImage.value = null
+
+        findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
     }
 }
