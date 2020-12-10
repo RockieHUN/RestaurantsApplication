@@ -19,11 +19,11 @@ interface MyDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun InsertRestaurant(entityRestaurant: EntityRestaurant)
 
-    @Query("Select * from restaurant_table where :city = city and :page = page")
-    suspend fun getRestaurants(city: String, page: Int) : List<EntityRestaurant>
+    @Query("Select * from restaurant_table where :city = city ")
+    suspend fun getRestaurants(city: String) : List<EntityRestaurant>
 
-    @Query("Select COUNT(*) from restaurant_table where :city = city and :page = page")
-    suspend fun getCount(city : String, page: Int): Int
+    @Query("Select COUNT(*) from restaurant_table where :city = city" )
+    suspend fun getCount(city : String): Int
 
     @Query("Delete from restaurant_table")
     suspend fun deleteRestaurants()
@@ -76,5 +76,6 @@ interface MyDatabaseDao {
     @Query("SELECT * from restaurant_pictures where restaurantId = :restaurantId")
     suspend fun getAllRestaurantPicture(restaurantId: Int) : MutableList<EntityRestaurantPicture>
 
-
+    @Query("Delete from restaurant_pictures where restaurantPictureId = :pictureId")
+    suspend fun deleteRestaurantPicture(pictureId : Int)
 }

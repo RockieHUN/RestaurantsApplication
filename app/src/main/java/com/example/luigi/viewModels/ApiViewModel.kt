@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.luigi.model.CityRestaurants
 import com.example.luigi.repository.ApiRepository
 import com.example.luigi.room.entities.EntityRestaurant
+import com.example.luigi.utils.Constanst
 import kotlinx.coroutines.launch
 
 class ApiViewModel(private val repository: ApiRepository): ViewModel() {
@@ -45,7 +46,7 @@ class ApiViewModel(private val repository: ApiRepository): ViewModel() {
     fun LoadDataWithAPI(){
         viewModelScope.launch{
             getCityNames()
-            getCityRestaurantsSuspend("New York")
+            getCityRestaurantsSuspend(Constanst.starterCity)
         }
 
 
@@ -73,8 +74,7 @@ class ApiViewModel(private val repository: ApiRepository): ViewModel() {
                     restaurant.reserve_url,
                     restaurant.mobile_reserve_url,
                     restaurant.mobile_reserve_url,
-                    "",
-                    apiResult.current_page
+                    ""
             )
             list.add(entityRestaurant)
         }

@@ -15,6 +15,7 @@ import com.example.luigi.R
 import com.example.luigi.databinding.FragmentSplashScreenBinding
 import com.example.luigi.repository.ApiRepository
 import com.example.luigi.utils.ClassConverter
+import com.example.luigi.utils.Constanst
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
@@ -158,7 +159,7 @@ class SplashScreenFragment : Fragment() {
                     Log.d("*********", "use DATABASE")
 
                     //load restaurants from the database
-                    myDatabaseViewModel.loadRestaurantsFromDatabase("New York", 1)
+                    myDatabaseViewModel.loadRestaurantsFromDatabase(Constanst.starterCity, 1)
                     myDatabaseViewModel.loadCityNamesFromDatabase()
 
 
@@ -167,7 +168,7 @@ class SplashScreenFragment : Fragment() {
                 }
             })
 
-        myDatabaseViewModel.getCount("New York", 1)
+        myDatabaseViewModel.getCount(Constanst.starterCity)
     }
 
 

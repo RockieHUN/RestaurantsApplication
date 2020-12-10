@@ -54,8 +54,8 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     Get the count of restaurants of a given city and page,
     available in the database
      */
-    suspend fun getCount(city : String, page: Int) : Int{
-        return myDatabaseDao.getCount(city, page)
+    suspend fun getCount(city : String) : Int{
+        return myDatabaseDao.getCount(city)
     }
 
     /*
@@ -63,7 +63,7 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     given city name and page
      */
     suspend fun getRestaurants(city : String, page: Int) : List<EntityRestaurant>{
-        return myDatabaseDao.getRestaurants(city, page)
+        return myDatabaseDao.getRestaurants(city)
     }
 
     suspend fun deleteCache(){
@@ -136,5 +136,9 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
 
     suspend fun getAllRestaurantPicture(restaurantId: Int) : MutableList<EntityRestaurantPicture>{
         return myDatabaseDao.getAllRestaurantPicture(restaurantId)
+    }
+
+    suspend fun deleteRestaurantPicture(pictureId : Int){
+        myDatabaseDao.deleteRestaurantPicture(pictureId)
     }
 }

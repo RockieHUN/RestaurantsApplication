@@ -1,5 +1,6 @@
 package com.example.luigi.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,7 +32,6 @@ class SelectDataAdapter(
                 listener.onItemClick(position,cityName.text.toString())
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {

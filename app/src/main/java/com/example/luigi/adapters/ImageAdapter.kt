@@ -8,6 +8,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.R
 import com.example.luigi.model.RestaurantPicture
+import com.example.luigi.utils.Constanst
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class ImageAdapter (
@@ -49,6 +50,27 @@ class ImageAdapter (
 
         //if its not the user's picture then he can't delete it
         if (myDatabaseViewModel.user.value!!.id != currentItem.userId) holder.deleteButton.visibility = View.GONE
+        else{
+
+            //set onclick listener to the delete button
+            holder.deleteButton.setOnClickListener{
+                myDatabaseViewModel.deleteRestaurantPicture(currentItem.restaurantPictureId)
+                val list = myDatabaseViewModel.restaurantPictures.value
+                list?.remove(currentItem)
+                myDatabaseViewModel.restaurantPictures.value = list
+
+                if (myDatabaseViewModel.currentCity.value!=null){
+                    myDatabaseViewModel.loadRestaurantsFromDatabase(myDatabaseViewModel.currentCity.value!!, 1)
+                }
+                else{
+                    myDatabaseViewModel.loadRestaurantsFromDatabase(Constanst.starterCity, 1)
+                }
+
+                //items.remove(currentItem)
+                //notifyDataSetChanged()
+            }
+
+        }
     }
 
     override fun getItemCount(): Int = items.size

@@ -35,7 +35,6 @@ class ClassConverter {
                 entity.mobile_reserve_url,
                 entity.image_url,
                 entity.timestamp,
-                entity.page,
                 null
             )
             return model

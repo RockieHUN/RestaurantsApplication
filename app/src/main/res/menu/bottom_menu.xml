@@ -10,9 +10,9 @@
         android:id="@id/favoritesFragment"
         />
 
-    <item android:title="@string/bottom_settings"
+    <!--<item android:title="@string/bottom_settings"
         android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_settings"/>
+        android:icon="@drawable/ic_settings"/> -->
 
     <item android:title="@string/bottom_profile"
         android:icon="@drawable/ic_account"

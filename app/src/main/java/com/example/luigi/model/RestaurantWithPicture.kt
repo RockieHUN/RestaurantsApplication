@@ -19,6 +19,5 @@ data class RestaurantWithPicture(
     val mobile_reserve_url: String,
     val image_url: String,
     var timestamp: String,
-    val page: Int,
     var image : Bitmap? = null
 )

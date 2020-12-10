@@ -89,9 +89,9 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     Check if the restaurants with the same city name and page number
     exist in the database. For this we will return the count.
      */
-    fun getCount(city: String, page: Int){
+    fun getCount(city: String){
         viewModelScope.launch {
-            val count = repository.getCount(city, page)
+            val count = repository.getCount(city)
             if (count > 0 ){
                 useDatabase.value = true
             }
@@ -365,5 +365,12 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             }
 
         }
+    }
+
+    fun deleteRestaurantPicture(pictureId : Int){
+        viewModelScope.launch(Dispatchers.IO){
+            repository.deleteRestaurantPicture(pictureId)
+        }
+
     }
 }

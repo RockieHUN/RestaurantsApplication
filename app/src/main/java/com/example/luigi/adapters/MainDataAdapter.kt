@@ -82,8 +82,6 @@ class MainDataAdapter(
         }
 
 
-        //TODO can I do better?
-        //Glide.with(activity).load(currentItem.image_url).into(holder.restaurantImage)
     }
 
     override fun getItemCount(): Int = filteredList.size

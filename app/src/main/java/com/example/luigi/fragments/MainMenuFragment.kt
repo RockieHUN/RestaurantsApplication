@@ -1,6 +1,7 @@
 package com.example.luigi.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +22,7 @@ import com.example.luigi.R
 import com.example.luigi.databinding.FragmentMainMenuBinding
 import com.example.luigi.repository.ApiRepository
 import com.example.luigi.utils.ClassConverter
+import com.example.luigi.utils.Constanst
 import com.example.luigi.viewModels.ApiViewModel
 import com.example.luigi.viewModels.ApiViewModelFactory
 import com.example.luigi.viewModels.MyDatabaseViewModel
@@ -55,17 +59,15 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
             ViewModelProvider(requireActivity()).get(MyDatabaseViewModel::class.java)
         }
 
-
-
         //reset picture list
         myDatabaseViewModel.restaurantPictures.value = mutableListOf()
 
-        binding.selectButton.text ="New York"
+        binding.selectButton.text = Constanst.starterCity
 
         //Add listener to the city selection button
         binding.appBarLayout.constraint_toolbarHolder.select_button.setOnClickListener{
             val dialog = MyDialogFragment()
-            dialog.show(requireActivity().supportFragmentManager,"costumDialog")
+            dialog.show(requireActivity().supportFragmentManager,"customDialog")
         }
 
         //show bottom navigation menu
@@ -100,31 +102,38 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
         }
 
         var dialog : DialogFragment? = null
+        if (!myDatabaseViewModel.currentCity.hasObservers()){
+
+            //OBSERVING THE CURRENT CITY AND LOADING THE CITY's RESTAURANTS
+            myDatabaseViewModel.currentCity.observe(viewLifecycleOwner, androidx.lifecycle.Observer { city ->
+                //display loading
+                dialog = LoadingFragment()
+                dialog?.show(requireActivity().supportFragmentManager,"loading")
+                binding.selectButton.text = city
+                loadRestaurants(city)
+            })
+        }
 
 
         var adapter : MainDataAdapter? = null
 
-        //OBSERVING THE DATA AND PASSING TO THE RECYCLE VIEW
-        myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
-            adapter = MainDataAdapter(restaurants, this,myDatabaseViewModel)
-            binding.recycleView.adapter = adapter
-            if (dialog != null){
-                dialog?.dismiss()
-            }
-            else{
-                //do nothing
-            }
-        })
+        if (!myDatabaseViewModel.restaurants.hasObservers()) {
+            //OBSERVING THE DATA AND PASSING TO THE RECYCLE VIEW
+           myDatabaseViewModel.restaurants.observe(requireActivity(), { restaurants ->
+
+                adapter = MainDataAdapter(myDatabaseViewModel.restaurants.value!!, this, myDatabaseViewModel)
+                binding.recycleView.adapter = adapter
+                if (dialog != null) {
+                    dialog?.dismiss()
+                }
+           })
+        }
+
         binding.recycleView.layoutManager = LinearLayoutManager(context)
         binding.recycleView.setHasFixedSize(true)
 
-        //OBSERVING THE CURRENT CITY AND LOADING THE CITY's RESTAURANTS
-        myDatabaseViewModel.currentCity.observe(viewLifecycleOwner, androidx.lifecycle.Observer { city ->
-            dialog = LoadingFragment()
-            dialog?.show(requireActivity().supportFragmentManager,"loading")
-            binding.selectButton.text = city
-            loadRestaurants(city)
-        })
+
+
 
         //SearchView
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
@@ -154,7 +163,7 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
 
         //reset variables
         myDatabaseViewModel.useApi.removeObservers(viewLifecycleOwner)
-        myDatabaseViewModel.useApi.removeObservers(viewLifecycleOwner)
+        myDatabaseViewModel.useDatabase.removeObservers(viewLifecycleOwner)
         myDatabaseViewModel.useApi.value = false
         myDatabaseViewModel.useDatabase.value = false
 
@@ -184,8 +193,10 @@ class MainMenuFragment : Fragment(), MainDataAdapter.OnItemClickListener {
             }
         })
 
-        myDatabaseViewModel.getCount(city,1)
+        myDatabaseViewModel.getCount(city)
     }
+
+
 
 
 }
