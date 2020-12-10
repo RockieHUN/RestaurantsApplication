@@ -11,11 +11,13 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.example.luigi.R
+import com.example.luigi.model.FavoriteWithPicture
 import com.example.luigi.room.entities.EntityFavorite
+import com.example.luigi.utils.ClassConverter
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class FavoriteDataAdapter(
-    private val items : List<EntityFavorite>,
+    private val items : List<FavoriteWithPicture>,
     private  val listener : OnItemClickListener,
     private val myDatabaseViewModel: MyDatabaseViewModel,
     private val lifecycle : LifecycleOwner
@@ -59,14 +61,18 @@ class FavoriteDataAdapter(
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
         holder.likeButton.setColorFilter(Color.argb(255, 194, 39, 72))
 
+        //load the current item's image
+        if (currentItem.image != null){
+            holder.restaurantImage.setImageBitmap(currentItem.image)
+        }
+
+
+        //delete current item from favorites
         holder.likeButton.setOnClickListener {
             myDatabaseViewModel.favorites.observe(lifecycle, Observer {
                 notifyDataSetChanged()
-                //TODO: remove observer
             })
-
-            myDatabaseViewModel.deleteFavorite(currentItem)
-
+            myDatabaseViewModel.deleteFavorite(ClassConverter.favoriteWithPictureToFavorite(currentItem))
         }
 
     }

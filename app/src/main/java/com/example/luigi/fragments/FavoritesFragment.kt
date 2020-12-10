@@ -15,6 +15,7 @@ import com.example.luigi.R
 import com.example.luigi.adapters.FavoriteDataAdapter
 import com.example.luigi.adapters.MainDataAdapter
 import com.example.luigi.databinding.FragmentFavoritesBinding
+import com.example.luigi.utils.ClassConverter
 import com.example.luigi.viewModels.MyDatabaseViewModel
 import java.util.*
 import kotlin.concurrent.timerTask
@@ -53,7 +54,10 @@ class FavoritesFragment : Fragment(), FavoriteDataAdapter.OnItemClickListener {
 
         //recycle view
 
-        binding.recycleView.adapter = FavoriteDataAdapter(myDatabaseViewModel.favorites.value!!, this, myDatabaseViewModel, viewLifecycleOwner)
+        binding.recycleView.adapter = FavoriteDataAdapter(
+           myDatabaseViewModel.favorites.value!!,
+            this, myDatabaseViewModel,
+            viewLifecycleOwner)
 
 
         binding.recycleView.layoutManager = LinearLayoutManager(context)

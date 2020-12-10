@@ -5,10 +5,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
-import com.example.luigi.model.CityRestaurants
-import com.example.luigi.model.Restaurant
-import com.example.luigi.model.RestaurantPicture
-import com.example.luigi.model.RestaurantWithPicture
+import com.example.luigi.model.*
 import com.example.luigi.repository.MyDatabaseRepository
 import com.example.luigi.room.MyDatabase
 import com.example.luigi.room.entities.*
@@ -28,7 +25,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     var restaurantProfiles : MutableLiveData <MutableList<RestaurantPicture>> = MutableLiveData<MutableList<RestaurantPicture>>()
     var cityNames : List<String> = listOf<String>()
     var currentCity : MutableLiveData<String> = MutableLiveData<String>()
-    var favorites : MutableLiveData<MutableList<EntityFavorite>> = MutableLiveData<MutableList<EntityFavorite>>()
+    var favorites : MutableLiveData<MutableList<FavoriteWithPicture>> = MutableLiveData<MutableList<FavoriteWithPicture>>()
 
     //user
     var user : MutableLiveData<EntityUser> = MutableLiveData()
@@ -171,27 +168,15 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
         viewModelScope.launch {
             val userId = repository.getUserId(user.value!!.email)
 
-            val entityFavorite = EntityFavorite(
-                0,
-                userId,
-                restaurant.id,
-                restaurant.name,
-                restaurant.address,
-                restaurant.city,
-                restaurant.state,
-                restaurant.area,
-                restaurant.postal_code,
-                restaurant.country,
-                restaurant.phone,
-                restaurant.lat,
-                restaurant.lng,
-                restaurant.price,
-                restaurant.mobile_reserve_url,
-                restaurant.mobile_reserve_url,
-                restaurant.image_url
-            )
+            //convert to entity
+            val entityFavorite = ClassConverter.restaurantWithPictureToEntityFavorite(restaurant, userId)
+
+
             if (repository.isLiked(userId,entityFavorite.restaurantId)){
+                //delete from database
                 repository.deleteFavorite(entityFavorite.ownerId, entityFavorite.restaurantId)
+
+                //delete from the viewModel list
                 if (favorites.value != null) {
                     if (favorites.value!!.size == 1){
                         favorites.value = mutableListOf()
@@ -205,7 +190,17 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             }
             else{
                 repository.addFavorite(entityFavorite)
-                favorites.value?.add(entityFavorite)
+
+                //get image
+                var image : Bitmap? = null
+                if (repository.getRestaurantPictureCount(entityFavorite.restaurantId)> 0)
+                    image = ImageUtils.byteArrayToBitmap(repository.getOneRestaurantPicture(entityFavorite.restaurantId).image!!)
+
+                //convert entity
+                val withPicture = ClassConverter.favoriteToWithPicture(entityFavorite)
+                withPicture.image = image
+
+                favorites.value?.add(withPicture)
             }
 
 
@@ -215,7 +210,17 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     fun deleteFavorite(entityFavorite: EntityFavorite){
         viewModelScope.launch {
             repository.deleteFavorite(entityFavorite.ownerId, entityFavorite.restaurantId)
-            if (favorites.value != null)  favorites.value!!.remove(entityFavorite)
+            if (favorites.value != null){
+
+                //remove the favorite from the copy of the original list
+                val tempList = favorites.value
+                tempList!!.removeIf{favorite ->
+                    favorite.ownerId == entityFavorite.ownerId && favorite.restaurantId == entityFavorite.restaurantId
+                }
+
+                //update the original list
+                favorites.value = tempList
+            }
         }
     }
 
@@ -224,7 +229,25 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
         viewModelScope.launch {
             val userId = repository.getUserId(user.value!!.email)
             val result = repository.getFavorites(userId)
-            favorites.value = result
+
+            //convert entities
+            if (result != null){
+                val list : MutableList<FavoriteWithPicture> = mutableListOf()
+
+                for (entity in result){
+                    val favorite = ClassConverter.favoriteToWithPicture(entity)
+
+                    var image : Bitmap? = null
+                    if (repository.getRestaurantPictureCount(entity.restaurantId)> 0)
+                        image = ImageUtils.byteArrayToBitmap(repository.getOneRestaurantPicture(entity.restaurantId).image!!)
+                    favorite.image = image
+                    list.add(favorite)
+                }
+
+                favorites.value = list
+            }
+
+
         }
 
     }
