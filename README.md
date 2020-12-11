@@ -1,4 +1,4 @@
-<img src="https://github.com/RockieHUN/RestaurantsApplication/blob/master/images/logo.jpg width = 24%">
+<img src="https://github.com/RockieHUN/RestaurantsApplication/blob/master/images/logo.jpg width = "75%">
 
 <p>This application is using a free api (https://ratpark-api.imok.space/) for getting restaurant data with <b>Retrofit</b>, and it will
 save it to a local database (implemented with <b>Room</b>).</p>
