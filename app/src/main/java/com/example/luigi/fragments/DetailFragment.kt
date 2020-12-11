@@ -24,9 +24,7 @@ import com.example.luigi.model.RestaurantPicture
 import com.example.luigi.model.RestaurantWithPicture
 import com.example.luigi.utils.ImageUtils
 import com.example.luigi.viewModels.MyDatabaseViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 
 class DetailFragment : Fragment(), ImageAdapter.OnItemClickListener {
@@ -61,6 +59,7 @@ class DetailFragment : Fragment(), ImageAdapter.OnItemClickListener {
 
         //load restaurant images
         myDatabaseViewModel.restaurantPictures.observe(viewLifecycleOwner, { pictureList ->
+            //if the list has elements then load to the imageViews
             if (pictureList.size > 0) {
                 binding.restaurantProfilePicture.setImageBitmap(pictureList[0].image)
 
@@ -68,7 +67,8 @@ class DetailFragment : Fragment(), ImageAdapter.OnItemClickListener {
                 binding.recycleView.adapter = adapter
 
             } else {
-                // do nothing
+                //set the placeholder to the restaurant profile imageView
+                binding.restaurantProfilePicture.setImageResource(R.drawable.alap)
             }
         })
         val horizontalLayout = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
@@ -136,7 +136,6 @@ class DetailFragment : Fragment(), ImageAdapter.OnItemClickListener {
 
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
-
                 //convert uri to bitmap and scale down
                 val bitmap = ImageUtils.uriToScaledBitmap(requireActivity(), imageUri!!)
                 //myDatabaseViewModel.profileImage.postValue(bitmap)
@@ -144,13 +143,16 @@ class DetailFragment : Fragment(), ImageAdapter.OnItemClickListener {
                 //convert bitmap to byteArray
                 val byteArray = ImageUtils.bitmapToByteArray(bitmap!!)
 
+                //generate an id
+                val id = myDatabaseViewModel.getAPictureId()
+
                 //save byteArray to the database
-                myDatabaseViewModel.addRestaurantImage(byteArray!!, getRestaurant().id)
+                myDatabaseViewModel.addRestaurantImage(id, byteArray!!, getRestaurant().id)
 
                 //refresh list
                 val list = myDatabaseViewModel.restaurantPictures.value
                 val userId = myDatabaseViewModel.getUserId(myDatabaseViewModel.user.value!!.email)
-                val pictureClass = RestaurantPicture(0, restaurant.id, userId, bitmap)
+                val pictureClass = RestaurantPicture(id, restaurant.id, userId, bitmap)
                 list!!.add(pictureClass)
                 myDatabaseViewModel.restaurantPictures.postValue(list)
             }

@@ -70,6 +70,9 @@ interface MyDatabaseDao {
     @Query("SELECT COUNT(*) from restaurant_pictures where restaurantId = :restaurantId")
     suspend fun getRestaurantPictureCount(restaurantId : Int) : Int
 
+    @Query("Select MAX(restaurantPictureId) + 1 from restaurant_pictures")
+    fun getAPictureId() : Int
+
     @Query("SELECT * from restaurant_pictures where restaurantId = :restaurantId LIMIT 1")
     suspend fun getOneRestaurantPicture(restaurantId: Int)  : EntityRestaurantPicture
 

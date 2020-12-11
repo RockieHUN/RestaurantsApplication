@@ -62,11 +62,14 @@ class MainDataAdapter(
         holder.restaurantPrice.text = currentItem.price.toString()+"$"
 
         //if the image is null keep the placeholder
-        if (currentItem.image!=null)  holder.restaurantImage.setImageBitmap(currentItem.image)
-
+        if (currentItem.image != null)  holder.restaurantImage.setImageBitmap(currentItem.image)
+        else holder.restaurantImage.setImageResource(R.drawable.alap)
 
         if (isLiked(currentItem.id)){
             holder.likeButton.setColorFilter(Color.argb(255, 194, 39, 72))
+        }
+        else{
+            holder.likeButton.setColorFilter(Color.argb(255,36, 189, 28))
         }
 
 

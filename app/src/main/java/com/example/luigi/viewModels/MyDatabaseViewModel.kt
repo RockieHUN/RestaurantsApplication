@@ -37,15 +37,16 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     var loadedComponents : MutableLiveData<Int> = MutableLiveData<Int>()
 
     //used for communication between recycleView and Detail Fragment
-    var restaurantName : String = "Orsay"
+    var restaurantName : String = "Lefty's"
     var position : Int = 0
+    var fromMain : Boolean
 
     //restaurantPictures
     var restaurantPictures : MutableLiveData<MutableList<RestaurantPicture>> = MutableLiveData<MutableList<RestaurantPicture>>()
 
-
     //INIT
     init {
+        fromMain = true
         loadedComponents.value = 0
         val userDao = MyDatabase.getDatabase(application).userDao()
         repository = MyDatabaseRepository(userDao)
@@ -102,7 +103,7 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     }
 
     /*
-    Load restaurants of the given city and page
+    Load restaurants of the given city and page with image
      */
     fun loadRestaurantsFromDatabase(city: String, page: Int){
         viewModelScope.launch {
@@ -111,8 +112,10 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             for (entity in entities){
 
                 var image : Bitmap? = null
-                if (repository.getRestaurantPictureCount(entity.id)> 0)
-                    image = ImageUtils.byteArrayToBitmap(repository.getOneRestaurantPicture(entity.id).image!!)
+                if (repository.getRestaurantPictureCount(entity.id)> 0) {
+                    val model = repository.getOneRestaurantPicture(entity.id)
+                    image = ImageUtils.byteArrayToBitmap(model.image!!)
+                }
 
                 val model = ClassConverter.restaurantToWithPicture(entity)
                 model.image = image
@@ -283,12 +286,12 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
     }
 
     //add an image to a restaurant
-    fun addRestaurantImage(image : ByteArray, restaurantId : Int){
+    fun addRestaurantImage(pictureId: Int, image : ByteArray, restaurantId : Int){
         viewModelScope.launch (Dispatchers.IO){
             val userId= repository.getUserId(user.value!!.email)
 
             val entityRestaurantPicture = EntityRestaurantPicture(
-                0,
+                pictureId,
                 restaurantId,
                 userId,
                 image
@@ -372,5 +375,9 @@ class MyDatabaseViewModel (application: Application): AndroidViewModel (applicat
             repository.deleteRestaurantPicture(pictureId)
         }
 
+    }
+
+    fun getAPictureId() : Int{
+        return repository.getAPictureId()
     }
 }

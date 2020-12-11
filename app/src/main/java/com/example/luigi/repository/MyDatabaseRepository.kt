@@ -141,4 +141,8 @@ class MyDatabaseRepository(private val myDatabaseDao : MyDatabaseDao) {
     suspend fun deleteRestaurantPicture(pictureId : Int){
         myDatabaseDao.deleteRestaurantPicture(pictureId)
     }
+
+    fun getAPictureId() : Int{
+        return myDatabaseDao.getAPictureId()
+    }
 }

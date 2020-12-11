@@ -12,7 +12,7 @@ import com.example.luigi.utils.Constanst
 import com.example.luigi.viewModels.MyDatabaseViewModel
 
 class ImageAdapter (
-    private val items : MutableList<RestaurantPicture>,
+    private var items : MutableList<RestaurantPicture>,
     private  val listener : ImageAdapter.OnItemClickListener,
     private val myDatabaseViewModel: MyDatabaseViewModel
 
@@ -54,12 +54,26 @@ class ImageAdapter (
 
             //set onclick listener to the delete button
             holder.deleteButton.setOnClickListener{
-                myDatabaseViewModel.deleteRestaurantPicture(currentItem.restaurantPictureId)
-                val list = myDatabaseViewModel.restaurantPictures.value
-                list?.remove(currentItem)
-                myDatabaseViewModel.restaurantPictures.value = list
 
-                if (myDatabaseViewModel.currentCity.value!=null){
+                //delete selected picture from database
+                myDatabaseViewModel.deleteRestaurantPicture(currentItem.restaurantPictureId)
+
+                //remove picture from the list
+                val list = myDatabaseViewModel.restaurantPictures.value
+
+                if (list?.size!! > 1){
+                    list.remove(currentItem)
+                    myDatabaseViewModel.restaurantPictures.value = list
+                }
+                else{
+                    myDatabaseViewModel.restaurantPictures.value = mutableListOf()
+                    items = mutableListOf()
+                    notifyDataSetChanged()
+                }
+
+
+                //refresh the data on the main page too
+                if (myDatabaseViewModel.currentCity.value !=null ){
                     myDatabaseViewModel.loadRestaurantsFromDatabase(myDatabaseViewModel.currentCity.value!!, 1)
                 }
                 else{

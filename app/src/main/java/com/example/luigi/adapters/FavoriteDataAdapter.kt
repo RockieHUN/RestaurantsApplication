@@ -38,7 +38,7 @@ class FavoriteDataAdapter(
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION){
-                listener.onItemClick(position,"")
+                listener.onItemClick(position,restaurantName.text.toString())
             }
         }
 
@@ -65,6 +65,7 @@ class FavoriteDataAdapter(
         if (currentItem.image != null){
             holder.restaurantImage.setImageBitmap(currentItem.image)
         }
+        else holder.restaurantImage.setImageResource(R.drawable.alap)
 
 
         //delete current item from favorites

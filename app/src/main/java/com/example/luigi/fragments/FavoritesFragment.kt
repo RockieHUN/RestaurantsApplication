@@ -53,7 +53,6 @@ class FavoritesFragment : Fragment(), FavoriteDataAdapter.OnItemClickListener {
         }
 
         //recycle view
-
         binding.recycleView.adapter = FavoriteDataAdapter(
            myDatabaseViewModel.favorites.value!!,
             this, myDatabaseViewModel,
@@ -64,8 +63,8 @@ class FavoritesFragment : Fragment(), FavoriteDataAdapter.OnItemClickListener {
         binding.recycleView.setHasFixedSize(true)
     }
 
-    override fun onItemClick(position: Int, toString: String) {
-        myDatabaseViewModel.position = position
+    override fun onItemClick(position: Int, restaurantName: String) {
+        myDatabaseViewModel.restaurantName = restaurantName
         findNavController().navigate(R.id.action_favoritesFragment_to_detailFragment)
     }
 

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "restaurant_pictures")
 data class EntityRestaurantPicture (
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var restaurantPictureId : Int,
     var restaurantId : Int,
     var userId : Int,
